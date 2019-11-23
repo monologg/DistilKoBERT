@@ -22,7 +22,7 @@ import time
 import numpy as np
 from transformers import BertTokenizer, RobertaTokenizer, GPT2Tokenizer
 import logging
-from kobert_tokenizer import KoBERTTokenizer
+from kobert_tokenizer import KoBertTokenizer
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -55,7 +55,7 @@ def main():
         bos = tokenizer.special_tokens_map['bos_token']  # `<|endoftext|>`
         sep = tokenizer.special_tokens_map['eos_token']  # `<|endoftext|>`
     elif args.tokenizer_type == 'kobert':
-        tokenizer = KoBERTTokenizer()
+        tokenizer = KoBertTokenizer()
         bos = '[CLS]'
         sep = '[SEP]'
 

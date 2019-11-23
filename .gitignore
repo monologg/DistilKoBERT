@@ -111,3 +111,7 @@ venv.bak/
 distillation/data/
 
 dump.txt
+
+distillation/kobert_model
+
+.DS_Store

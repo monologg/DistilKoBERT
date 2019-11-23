@@ -3,7 +3,7 @@ from kobert.utils import get_tokenizer
 # from transformers import BertTokenizer
 
 
-class KoBERTTokenizer(object):
+class KoBertTokenizer(object):
     """
     https://github.com/google/sentencepiece/blob/master/python/README.md
     """
@@ -37,7 +37,7 @@ class KoBERTTokenizer(object):
         return self.sp.PieceToId(piece)
 
 if __name__ == "__main__":
-    tokenizer = KoBERTTokenizer()
+    tokenizer = KoBertTokenizer()
 
     text = "[CLS] 한국어 모델이당~~ kor [SEP]"
     a = tokenizer.tokenize(text)
