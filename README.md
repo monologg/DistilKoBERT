@@ -1,0 +1,2 @@
+# DistillKoBERT
+Distillation of KoBERT
