@@ -22,42 +22,46 @@ import time
 import numpy as np
 from transformers import BertTokenizer, RobertaTokenizer, GPT2Tokenizer
 import logging
+from kobert_tokenizer import KoBERTTokenizer
 
-logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-                    datefmt = '%m/%d/%Y %H:%M:%S',
-                    level = logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Preprocess the data to avoid re-doing it several times by (tokenization + token_to_ids).")
     parser.add_argument('--file_path', type=str, default='data/dump.txt',
                         help='The path to the data.')
-    parser.add_argument('--tokenizer_type', type=str, default='bert', choices=['bert', 'roberta', 'gpt2'])
+    parser.add_argument('--tokenizer_type', type=str, default='bert', choices=['bert', 'roberta', 'gpt2', 'kobert'])
     parser.add_argument('--tokenizer_name', type=str, default='bert-base-uncased',
                         help="The tokenizer to use.")
     parser.add_argument('--dump_file', type=str, default='data/dump',
                         help='The dump file prefix.')
     args = parser.parse_args()
 
-
     logger.info(f'Loading Tokenizer ({args.tokenizer_name})')
     if args.tokenizer_type == 'bert':
         tokenizer = BertTokenizer.from_pretrained(args.tokenizer_name)
-        bos = tokenizer.special_tokens_map['cls_token'] # `[CLS]`
-        sep = tokenizer.special_tokens_map['sep_token'] # `[SEP]`
+        bos = tokenizer.special_tokens_map['cls_token']  # `[CLS]`
+        sep = tokenizer.special_tokens_map['sep_token']  # `[SEP]`
     elif args.tokenizer_type == 'roberta':
         tokenizer = RobertaTokenizer.from_pretrained(args.tokenizer_name)
-        bos = tokenizer.special_tokens_map['cls_token'] # `<s>`
-        sep = tokenizer.special_tokens_map['sep_token'] # `</s>`
+        bos = tokenizer.special_tokens_map['cls_token']  # `<s>`
+        sep = tokenizer.special_tokens_map['sep_token']  # `</s>`
     elif args.tokenizer_type == 'gpt2':
         tokenizer = GPT2Tokenizer.from_pretrained(args.tokenizer_name)
-        bos = tokenizer.special_tokens_map['bos_token'] # `<|endoftext|>`
-        sep = tokenizer.special_tokens_map['eos_token'] # `<|endoftext|>`    
+        bos = tokenizer.special_tokens_map['bos_token']  # `<|endoftext|>`
+        sep = tokenizer.special_tokens_map['eos_token']  # `<|endoftext|>`
+    elif args.tokenizer_type == 'kobert':
+        tokenizer = KoBERTTokenizer()
+        bos = '[CLS]'
+        sep = '[SEP]'
 
     logger.info(f'Loading text from {args.file_path}')
     with open(args.file_path, 'r', encoding='utf8') as fp:
         data = fp.readlines()
-
 
     logger.info(f'Start encoding')
     logger.info(f'{len(data)} examples to process.')
@@ -67,8 +71,15 @@ def main():
     interval = 10000
     start = time.time()
     for text in data:
-        text = f'{bos} {text.strip()} {sep}'
-        token_ids = tokenizer.encode(text, add_special_tokens=False)
+        text = f'{text.strip()}'
+        # print("text:",text)
+        # token_ids = tokenizer.encode(text, add_special_tokens=False)
+        text_token_ids = tokenizer.encode(text)
+        token_ids = []
+        token_ids.append(tokenizer.encode_id(bos))
+        token_ids.extend(text_token_ids)
+        token_ids.append(tokenizer.encode_id(sep))
+        # print("token_ids:", token_ids)
         rslt.append(token_ids)
 
         iter += 1
@@ -78,7 +89,6 @@ def main():
             start = time.time()
     logger.info('Finished binarization')
     logger.info(f'{len(data)} examples processed.')
-
 
     dp_file = f'{args.dump_file}.{args.tokenizer_name}.pickle'
     rslt_ = [np.uint16(d) for d in rslt]
