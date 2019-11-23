@@ -115,3 +115,5 @@ dump.txt
 distillation/kobert_model
 
 .DS_Store
+
+kobert/
