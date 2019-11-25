@@ -11,23 +11,18 @@ from transformers import PreTrainedTokenizer
 
 logger = logging.getLogger(__name__)
 
-VOCAB_FILES_NAMES = {'vocab_file': 'tokenizer_78b3253a26.model'}
+VOCAB_FILES_NAMES = {'vocab_file': 'tokenizer_78b3253a26.model',
+                     'vocab_txt': 'vocab.txt'}
+VOCAB_TXT = 'vocab.txt'
 
 PRETRAINED_VOCAB_FILES_MAP = {
     'vocab_file':
-    {
-        'kobert': "https://kobert.blob.core.windows.net/models/kobert/tokenizer/tokenizer_78b3253a26.model",
-    }
+        {
+            'kobert': "https://kobert.blob.core.windows.net/models/kobert/tokenizer/tokenizer_78b3253a26.model",
+        }
 }
 
 SPIECE_UNDERLINE = u'▁'
-
-
-# TODO
-# 1. build vocab
-# 2. PieceToId 등 전부 제거 (sp_model에서는 tokenizing까지만 하기)
-# 3. special token id property
-# 4. 기타 함수 오류 체크
 
 
 class KoBertTokenizer(PreTrainedTokenizer):
@@ -39,7 +34,7 @@ class KoBertTokenizer(PreTrainedTokenizer):
     vocab_files_names = VOCAB_FILES_NAMES
     pretrained_vocab_files_map = PRETRAINED_VOCAB_FILES_MAP
 
-    def __init__(self, vocab_file,
+    def __init__(self, vocab_file, vocab_txt,
                  do_lower_case=False, remove_space=True, keep_accents=False,
                  unk_token="[UNK]", sep_token="[SEP]", pad_token="[PAD]", cls_token="[CLS]",
                  mask_token="[MASK]", **kwargs):
@@ -48,7 +43,14 @@ class KoBertTokenizer(PreTrainedTokenizer):
                                               mask_token=mask_token,
                                               **kwargs)
 
-        # TODO Build vocab
+        # Build vocab
+        self.token2idx = dict()
+        self.idx2token = []
+        with open(vocab_txt, 'r', encoding='utf-8') as f:
+            for idx, token in enumerate(f):
+                token = token.strip()
+                self.token2idx[token] = idx
+                self.idx2token.append(token)
 
         self.max_len_single_sentence = self.max_len - 2  # take into account special tokens
         self.max_len_sentences_pair = self.max_len - 3  # take into account special tokens
@@ -56,45 +58,46 @@ class KoBertTokenizer(PreTrainedTokenizer):
         try:
             import sentencepiece as spm
         except ImportError:
-            logger.warning("You need to install SentencePiece to use XLNetTokenizer: https://github.com/google/sentencepiece"
+            logger.warning("You need to install SentencePiece to use KoBertTokenizer: https://github.com/google/sentencepiece"
                            "pip install sentencepiece")
 
         self.do_lower_case = do_lower_case
         self.remove_space = remove_space
         self.keep_accents = keep_accents
         self.vocab_file = vocab_file
+        self.vocab_txt = vocab_txt
 
         self.sp_model = spm.SentencePieceProcessor()
         self.sp_model.Load(vocab_file)
 
     @property
     def unk_token_id(self):
-        """ Id of the unknown token in the vocabulary. Log an error if used while not having been set. """
+        """ Id of the unknown token in the vocabulary. """
         return self.convert_tokens_to_ids(self.unk_token)
 
     @property
     def sep_token_id(self):
-        """ Id of the separation token in the vocabulary. E.g. separate context and query in an input sequence. Log an error if used while not having been set. """
+        """ Id of the separation token in the vocabulary. """
         return self.convert_tokens_to_ids(self.sep_token)
 
     @property
     def pad_token_id(self):
-        """ Id of the padding token in the vocabulary. Log an error if used while not having been set. """
+        """ Id of the padding token in the vocabulary. """
         return self.convert_tokens_to_ids(self.pad_token)
 
     @property
     def cls_token_id(self):
-        """ Id of the classification token in the vocabulary. E.g. to extract a summary of an input sequence leveraging self-attention along the full depth of the model. Log an error if used while not having been set. """
+        """ Id of the classification token in the vocabulary. """
         return self.convert_tokens_to_ids(self.cls_token)
 
     @property
     def mask_token_id(self):
-        """ Id of the mask token in the vocabulary. E.g. when training a model with masked-language modeling. Log an error if used while not having been set. """
+        """ Id of the mask token in the vocabulary. """
         return self.convert_tokens_to_ids(self.mask_token)
 
     @property
     def vocab_size(self):
-        return 8002
+        return len(self.idx2token)
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -170,11 +173,11 @@ class KoBertTokenizer(PreTrainedTokenizer):
 
     def _convert_token_to_id(self, token):
         """ Converts a token (str/unicode) in an id using the vocab. """
-        return self.sp_model.PieceToId(token)
+        return self.token2idx[token]
 
     def _convert_id_to_token(self, index, return_unicode=True):
         """Converts an index (integer) in a token (string/unicode) using the vocab."""
-        token = self.sp_model.IdToPiece(index)
+        token = self.idx2token[index]
         if six.PY2 and return_unicode and isinstance(token, str):
             token = token.decode('utf-8')
         return token
@@ -248,9 +251,22 @@ class KoBertTokenizer(PreTrainedTokenizer):
         if not os.path.isdir(save_directory):
             logger.error("Vocabulary path ({}) should be a directory".format(save_directory))
             return
-        out_vocab_file = os.path.join(save_directory, VOCAB_FILES_NAMES['vocab_file'])
+        out_vocab_model = os.path.join(save_directory, VOCAB_FILES_NAMES['vocab_file'])
+        out_vocab_txt = os.path.join(save_directory, VOCAB_FILES_NAMES['vocab_txt'])
 
-        if os.path.abspath(self.vocab_file) != os.path.abspath(out_vocab_file):
-            copyfile(self.vocab_file, out_vocab_file)
+        if os.path.abspath(self.vocab_file) != os.path.abspath(out_vocab_model):
+            copyfile(self.vocab_file, out_vocab_model)
 
-        return (out_vocab_file,)
+        if os.path.abspath(self.vocab_txt) != os.path.abspath(out_vocab_txt):
+            copyfile(self.vocab_txt, out_vocab_txt)
+
+        return out_vocab_model, out_vocab_txt
+
+
+if __name__ == '__main__':
+    tokenizer = KoBertTokenizer.from_pretrained('kobert')
+    a = tokenizer.tokenize("SKTBrain에서 KoBERT 모델을 공개해준 덕분에 BERT-CRF 기반 객체명인식기를 쉽게 개발할 수 있었다.")
+    print(a)
+    b = tokenizer.convert_tokens_to_ids(a)
+    print(tokenizer.build_inputs_with_special_tokens(b))
+    print(tokenizer.vocab_size)
