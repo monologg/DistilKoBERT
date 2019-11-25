@@ -109,7 +109,7 @@ class KoBertTokenizer(PreTrainedTokenizer):
         try:
             import sentencepiece as spm
         except ImportError:
-            logger.warning("You need to install SentencePiece to use XLNetTokenizer: https://github.com/google/sentencepiece"
+            logger.warning("You need to install SentencePiece to use KoBertTokenizer: https://github.com/google/sentencepiece"
                            "pip install sentencepiece")
         self.sp_model = spm.SentencePieceProcessor()
         self.sp_model.Load(self.vocab_file)
@@ -173,7 +173,7 @@ class KoBertTokenizer(PreTrainedTokenizer):
 
     def _convert_token_to_id(self, token):
         """ Converts a token (str/unicode) in an id using the vocab. """
-        return self.token2idx[token]
+        return self.token2idx.get(token, self.token2idx[self.unk_token])
 
     def _convert_id_to_token(self, index, return_unicode=True):
         """Converts an index (integer) in a token (string/unicode) using the vocab."""
@@ -261,12 +261,3 @@ class KoBertTokenizer(PreTrainedTokenizer):
             copyfile(self.vocab_txt, out_vocab_txt)
 
         return out_vocab_model, out_vocab_txt
-
-
-if __name__ == '__main__':
-    tokenizer = KoBertTokenizer.from_pretrained('kobert')
-    a = tokenizer.tokenize("SKTBrain에서 KoBERT 모델을 공개해준 덕분에 BERT-CRF 기반 객체명인식기를 쉽게 개발할 수 있었다.")
-    print(a)
-    b = tokenizer.convert_tokens_to_ids(a)
-    print(tokenizer.build_inputs_with_special_tokens(b))
-    print(tokenizer.vocab_size)

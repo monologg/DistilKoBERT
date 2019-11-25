@@ -26,7 +26,7 @@ import psutil
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.optim import AdamW
+from transformers import AdamW, WarmupLinearSchedule
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import RandomSampler, BatchSampler, DataLoader
 
@@ -34,8 +34,6 @@ try:
     from torch.utils.tensorboard import SummaryWriter
 except:
     from tensorboardX import SummaryWriter
-
-from transformers import get_linear_schedule_with_warmup
 
 from utils import logger
 from lm_seqs_dataset import LmSeqsDataset
@@ -137,9 +135,9 @@ class Distiller:
                                betas=(0.9, 0.98))
 
         warmup_steps = math.ceil(num_train_optimization_steps * params.warmup_prop)
-        self.scheduler = get_linear_schedule_with_warmup(self.optimizer,
-                                                num_warmup_steps=warmup_steps,
-                                                num_training_steps=num_train_optimization_steps)
+        self.scheduler = WarmupLinearSchedule(self.optimizer, 
+                                        warmup_steps=warmup_steps, 
+                                        t_total=num_train_optimization_steps)
 
         if self.fp16:
             try:
@@ -193,7 +191,7 @@ class Distiller:
         token_ids, lengths = self.round_batch(x=token_ids, lengths=lengths)
         assert token_ids.size(0) == lengths.size(0)
 
-        attn_mask = (torch.arange(token_ids.size(1), dtype=torch.long, device=lengths.device) < lengths[:, None])
+        attn_mask = (torch.arange(token_ids.size(1), dtype=torch.int, device=lengths.device) < lengths[:, None])
 
         bs, max_seq_len = token_ids.size()
         mlm_labels = token_ids.new(token_ids.size()).copy_(token_ids)
@@ -201,7 +199,7 @@ class Distiller:
         x_prob = self.token_probs[token_ids.flatten()]
         n_tgt = math.ceil(self.mlm_mask_prop * lengths.sum().item())
         tgt_ids = torch.multinomial(x_prob / x_prob.sum(), n_tgt, replacement=False)
-        pred_mask = torch.zeros(bs * max_seq_len, dtype=torch.bool, device=token_ids.device) # previously `dtype=torch.uint8`, cf pytorch 1.2.0 compatibility
+        pred_mask = torch.zeros(bs * max_seq_len, dtype=torch.uint8, device=token_ids.device) # previously `dtype=torch.uint8`, cf pytorch 1.2.0 compatibility
         pred_mask[tgt_ids] = 1
         pred_mask = pred_mask.view(bs, max_seq_len)
 
@@ -253,7 +251,7 @@ class Distiller:
         token_ids, lengths = self.round_batch(x=token_ids, lengths=lengths)
         assert token_ids.size(0) == lengths.size(0)
 
-        attn_mask = (torch.arange(token_ids.size(1), dtype=torch.long, device=lengths.device) < lengths[:, None])
+        attn_mask = (torch.arange(token_ids.size(1), dtype=torch.int, device=lengths.device) < lengths[:, None])
         clm_labels = token_ids.new(token_ids.size()).copy_(token_ids)
         clm_labels[~attn_mask] = -1 # previously `clm_labels[1-attn_mask] = -1`, cf pytorch 1.2.0 compatibility
 

@@ -109,10 +109,7 @@ venv.bak/
 .idea/
 
 distillation/data/
-
-dump.txt
-
-distillation/kobert_model
+distillation/serialization_dir
 
 .DS_Store
 

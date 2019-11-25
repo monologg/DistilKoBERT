@@ -22,7 +22,7 @@ import time
 import numpy as np
 from transformers import BertTokenizer, RobertaTokenizer, GPT2Tokenizer
 import logging
-from kobert_tokenizer import KoBertTokenizer
+from tokenization_kobert import KoBertTokenizer
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
@@ -55,9 +55,9 @@ def main():
         bos = tokenizer.special_tokens_map['bos_token']  # `<|endoftext|>`
         sep = tokenizer.special_tokens_map['eos_token']  # `<|endoftext|>`
     elif args.tokenizer_type == 'kobert':
-        tokenizer = KoBertTokenizer()
-        bos = '[CLS]'
-        sep = '[SEP]'
+        tokenizer = KoBertTokenizer.from_pretrained('kobert')
+        bos = tokenizer.special_tokens_map['cls_token']
+        sep = tokenizer.special_tokens_map['sep_token']
 
     logger.info(f'Loading text from {args.file_path}')
     with open(args.file_path, 'r', encoding='utf8') as fp:
@@ -71,15 +71,9 @@ def main():
     interval = 10000
     start = time.time()
     for text in data:
-        text = f'{text.strip()}'
-        # print("text:",text)
-        # token_ids = tokenizer.encode(text, add_special_tokens=False)
-        text_token_ids = tokenizer.encode(text)
-        token_ids = []
-        token_ids.append(tokenizer.encode_id(bos))
-        token_ids.extend(text_token_ids)
-        token_ids.append(tokenizer.encode_id(sep))
-        # print("token_ids:", token_ids)
+        text = f'{bos} {text.strip()} {sep}'
+        print(text)
+        token_ids = tokenizer.encode(text, add_special_tokens=False)
         rslt.append(token_ids)
 
         iter += 1

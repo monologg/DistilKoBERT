@@ -29,7 +29,7 @@ from transformers import RobertaConfig, RobertaForMaskedLM, RobertaTokenizer
 from transformers import DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer
 from transformers import GPT2Config, GPT2LMHeadModel, GPT2Tokenizer
 
-from scripts.kobert_tokenizer import KoBertTokenizer
+from scripts.tokenization_kobert import KoBertTokenizer
 
 from distiller import Distiller
 from utils import git_log, logger, init_gpu_params, set_seed
@@ -58,7 +58,7 @@ def sanity_checks(args):
         assert (args.student_type in ['gpt2']) and (args.teacher_type in ['gpt2'])
 
     assert args.teacher_type == args.student_type or (args.student_type == 'distilbert' and args.teacher_type == 'bert') \
-           or (args.student_type == 'distilkobert' and args.teacher_type == 'kobert')
+        or (args.student_type == 'distilkobert' and args.teacher_type == 'kobert')
     assert os.path.isfile(args.student_config)
     if args.student_pretrained_weights is not None:
         assert os.path.isfile(args.student_pretrained_weights)
@@ -210,7 +210,7 @@ def main():
 
     ### TOKENIZER ###
     if teacher_tokenizer_class == KoBertTokenizer:
-        pass
+        tokenizer = KoBertTokenizer.from_pretrained('kobert')
     else:
         tokenizer = teacher_tokenizer_class.from_pretrained(args.teacher_name)
     special_tok_ids = {}
@@ -219,7 +219,8 @@ def main():
         special_tok_ids[tok_name] = tokenizer.all_special_ids[idx]
     logger.info(f'Special tokens {special_tok_ids}')
     args.special_tok_ids = special_tok_ids
-    args.max_model_input_size = tokenizer.max_model_input_sizes[args.teacher_name]
+    # args.max_model_input_size = tokenizer.max_model_input_sizes[args.teacher_name]
+    args.max_model_input_size = 512  # NOTE Hard-coding
 
     ## DATA LOADER ##
     logger.info(f'Loading data from {args.data_file}')
