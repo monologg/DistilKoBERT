@@ -72,7 +72,6 @@ def main():
     start = time.time()
     for text in data:
         text = f'{bos} {text.strip()} {sep}'
-        print(text)
         token_ids = tokenizer.encode(text, add_special_tokens=False)
         rslt.append(token_ids)
 
