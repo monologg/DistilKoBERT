@@ -16,18 +16,18 @@
 Preprocessing script before training DistilBERT.
 Specific to BERT -> DistilBERT.
 """
-from transformers import BertForMaskedLM, RobertaForMaskedLM
+from transformers import BertForMaskedLM
 import torch
 import argparse
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Extraction some layers of the full BertForMaskedLM or RObertaForMaskedLM for Transfer Learned Distillation")
+    parser = argparse.ArgumentParser(
+        description="Extraction some layers of the full BertForMaskedLM or RObertaForMaskedLM for Transfer Learned Distillation")
     parser.add_argument("--model_type", default="bert", choices=["bert"])
-    parser.add_argument("--model_name", default='bert-base-uncased', type=str)
+    parser.add_argument("--model_name", default='kobert', type=str)
     parser.add_argument("--dump_checkpoint", default='serialization_dir/tf_bert-base-uncased_0247911.pth', type=str)
     parser.add_argument("--vocab_transform", action='store_true')
     args = parser.parse_args()
-
 
     if args.model_type == 'bert':
         model = BertForMaskedLM.from_pretrained(args.model_name)
@@ -47,6 +47,7 @@ if __name__ == '__main__':
 
     std_idx = 0
     for teacher_idx in [0, 2, 4, 7, 9, 11]:
+    # for teacher_idx in [0, 4, 8]:
         for w in ['weight', 'bias']:
             compressed_sd[f'distilbert.transformer.layer.{std_idx}.attention.q_lin.{w}'] = \
                 state_dict[f'{prefix}.encoder.layer.{teacher_idx}.attention.self.query.{w}']
