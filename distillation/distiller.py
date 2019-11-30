@@ -39,6 +39,7 @@ from utils import logger
 from lm_seqs_dataset import LmSeqsDataset
 from grouped_batch_sampler import GroupedBatchSampler, create_lengths_groups
 
+
 class Distiller:
     def __init__(self,
                  params: dict,
@@ -124,7 +125,8 @@ class Distiller:
 
         no_decay = ['bias', 'LayerNorm.weight']
         optimizer_grouped_parameters = [
-            {'params': [p for n, p in student.named_parameters() if not any(nd in n for nd in no_decay) and p.requires_grad], 'weight_decay': params.weight_decay},
+            {'params': [p for n, p in student.named_parameters() if not any(nd in n for nd in no_decay) and p.requires_grad],
+             'weight_decay': params.weight_decay},
             {'params': [p for n, p in student.named_parameters() if any(nd in n for nd in no_decay) and p.requires_grad], 'weight_decay': 0.0}
         ]
         logger.info("------ Number of trainable parameters (student): %i" % sum([p.numel() for p in self.student.parameters() if p.requires_grad]))
@@ -135,9 +137,9 @@ class Distiller:
                                betas=(0.9, 0.98))
 
         warmup_steps = math.ceil(num_train_optimization_steps * params.warmup_prop)
-        self.scheduler = WarmupLinearSchedule(self.optimizer, 
-                                        warmup_steps=warmup_steps, 
-                                        t_total=num_train_optimization_steps)
+        self.scheduler = WarmupLinearSchedule(self.optimizer,
+                                              warmup_steps=warmup_steps,
+                                              t_total=num_train_optimization_steps)
 
         if self.fp16:
             try:
@@ -191,7 +193,7 @@ class Distiller:
         token_ids, lengths = self.round_batch(x=token_ids, lengths=lengths)
         assert token_ids.size(0) == lengths.size(0)
 
-        attn_mask = (torch.arange(token_ids.size(1), dtype=torch.int, device=lengths.device) < lengths[:, None])
+        attn_mask = (torch.arange(token_ids.size(1), dtype=torch.long, device=lengths.device) < lengths[:, None])
 
         bs, max_seq_len = token_ids.size()
         mlm_labels = token_ids.new(token_ids.size()).copy_(token_ids)
@@ -199,7 +201,8 @@ class Distiller:
         x_prob = self.token_probs[token_ids.flatten()]
         n_tgt = math.ceil(self.mlm_mask_prop * lengths.sum().item())
         tgt_ids = torch.multinomial(x_prob / x_prob.sum(), n_tgt, replacement=False)
-        pred_mask = torch.zeros(bs * max_seq_len, dtype=torch.uint8, device=token_ids.device) # previously `dtype=torch.uint8`, cf pytorch 1.2.0 compatibility
+        pred_mask = torch.zeros(bs * max_seq_len, dtype=torch.uint8,
+                                device=token_ids.device)  # previously `dtype=torch.uint8`, cf pytorch 1.2.0 compatibility
         pred_mask[tgt_ids] = 1
         pred_mask = pred_mask.view(bs, max_seq_len)
 
@@ -212,7 +215,7 @@ class Distiller:
                 pred_mask = pred_mask.view(-1)
                 n2 = max(n1 % 8, 8 * (n1 // 8))
                 if n2 != n1:
-                    pred_mask[torch.nonzero(pred_mask).view(-1)[:n1-n2]] = 0
+                    pred_mask[torch.nonzero(pred_mask).view(-1)[:n1 - n2]] = 0
                 pred_mask = pred_mask.view(bs, max_seq_len)
                 assert pred_mask.sum().item() % 8 == 0, pred_mask.sum().item()
 
@@ -223,7 +226,7 @@ class Distiller:
         _token_ids = _token_ids_mask * (probs == 0).long() + _token_ids_real * (probs == 1).long() + _token_ids_rand * (probs == 2).long()
         token_ids = token_ids.masked_scatter(pred_mask, _token_ids)
 
-        mlm_labels[~pred_mask] = -1 # previously `mlm_labels[1-pred_mask] = -1`, cf pytorch 1.2.0 compatibility
+        mlm_labels[1 - pred_mask] = -1  # previously `mlm_labels[1-pred_mask] = -1`, cf pytorch 1.2.0 compatibility
 
         # sanity checks
         assert 0 <= token_ids.min() <= token_ids.max() < self.vocab_size
@@ -251,9 +254,9 @@ class Distiller:
         token_ids, lengths = self.round_batch(x=token_ids, lengths=lengths)
         assert token_ids.size(0) == lengths.size(0)
 
-        attn_mask = (torch.arange(token_ids.size(1), dtype=torch.int, device=lengths.device) < lengths[:, None])
+        attn_mask = (torch.arange(token_ids.size(1), dtype=torch.long, device=lengths.device) < lengths[:, None])
         clm_labels = token_ids.new(token_ids.size()).copy_(token_ids)
-        clm_labels[~attn_mask] = -1 # previously `clm_labels[1-attn_mask] = -1`, cf pytorch 1.2.0 compatibility
+        clm_labels[~attn_mask] = -1  # previously `clm_labels[1-attn_mask] = -1`, cf pytorch 1.2.0 compatibility
 
         # sanity checks
         assert 0 <= token_ids.min() <= token_ids.max() < self.vocab_size
@@ -319,7 +322,7 @@ class Distiller:
         self.teacher.eval()
 
         for _ in range(self.params.n_epoch):
-            if self.is_master: logger.info(f'--- Starting epoch {self.epoch}/{self.params.n_epoch-1}')
+            if self.is_master: logger.info(f'--- Starting epoch {self.epoch}/{self.params.n_epoch - 1}')
             if self.multi_gpu:
                 torch.distributed.barrier()
 
@@ -336,10 +339,10 @@ class Distiller:
 
                 iter_bar.update()
                 iter_bar.set_postfix({'Last_loss': f'{self.last_loss:.2f}',
-                                      'Avg_cum_loss': f'{self.total_loss_epoch/self.n_iter:.2f}'})
+                                      'Avg_cum_loss': f'{self.total_loss_epoch / self.n_iter:.2f}'})
             iter_bar.close()
 
-            if self.is_master: logger.info(f'--- Ending epoch {self.epoch}/{self.params.n_epoch-1}')
+            if self.is_master: logger.info(f'--- Ending epoch {self.epoch}/{self.params.n_epoch - 1}')
             self.end_epoch()
 
         if self.is_master:
@@ -362,30 +365,30 @@ class Distiller:
         lm_labels: `torch.tensor(bs, seq_length)` - The language modeling labels (mlm labels for MLM and clm labels for CLM).
         """
         if self.mlm:
-            s_logits, s_hidden_states = self.student(input_ids=input_ids, attention_mask=attention_mask)     # (bs, seq_length, voc_size)
+            s_logits, s_hidden_states = self.student(input_ids=input_ids, attention_mask=attention_mask)  # (bs, seq_length, voc_size)
             with torch.no_grad():
-                t_logits, t_hidden_states = self.teacher(input_ids=input_ids, attention_mask=attention_mask) # (bs, seq_length, voc_size)
+                t_logits, t_hidden_states = self.teacher(input_ids=input_ids, attention_mask=attention_mask)  # (bs, seq_length, voc_size)
         else:
-            s_logits, _, s_hidden_states = self.student(input_ids=input_ids, attention_mask=None)            # (bs, seq_length, voc_size)
+            s_logits, _, s_hidden_states = self.student(input_ids=input_ids, attention_mask=None)  # (bs, seq_length, voc_size)
             with torch.no_grad():
-                t_logits, _, t_hidden_states = self.teacher(input_ids=input_ids, attention_mask=None)           # (bs, seq_length, voc_size)
+                t_logits, _, t_hidden_states = self.teacher(input_ids=input_ids, attention_mask=None)  # (bs, seq_length, voc_size)
         assert s_logits.size() == t_logits.size()
 
-        #https://github.com/peterliht/knowledge-distillation-pytorch/blob/master/model/net.py#L100
-        #https://github.com/peterliht/knowledge-distillation-pytorch/issues/2
+        # https://github.com/peterliht/knowledge-distillation-pytorch/blob/master/model/net.py#L100
+        # https://github.com/peterliht/knowledge-distillation-pytorch/issues/2
         if self.params.restrict_ce_to_mask:
-            mask = (lm_labels>-1).unsqueeze(-1).expand_as(s_logits)    # (bs, seq_lenth, voc_size)
+            mask = (lm_labels > -1).unsqueeze(-1).expand_as(s_logits)  # (bs, seq_lenth, voc_size)
         else:
-            mask = attention_mask.unsqueeze(-1).expand_as(s_logits)    # (bs, seq_lenth, voc_size)
-        s_logits_slct = torch.masked_select(s_logits, mask)            # (bs * seq_length * voc_size) modulo the 1s in mask
-        s_logits_slct = s_logits_slct.view(-1, s_logits.size(-1))      # (bs * seq_length, voc_size) modulo the 1s in mask
-        t_logits_slct = torch.masked_select(t_logits, mask)            # (bs * seq_length * voc_size) modulo the 1s in mask
-        t_logits_slct = t_logits_slct.view(-1, s_logits.size(-1))      # (bs * seq_length, voc_size) modulo the 1s in mask
+            mask = attention_mask.unsqueeze(-1).expand_as(s_logits)  # (bs, seq_lenth, voc_size)
+        s_logits_slct = torch.masked_select(s_logits, mask)  # (bs * seq_length * voc_size) modulo the 1s in mask
+        s_logits_slct = s_logits_slct.view(-1, s_logits.size(-1))  # (bs * seq_length, voc_size) modulo the 1s in mask
+        t_logits_slct = torch.masked_select(t_logits, mask)  # (bs * seq_length * voc_size) modulo the 1s in mask
+        t_logits_slct = t_logits_slct.view(-1, s_logits.size(-1))  # (bs * seq_length, voc_size) modulo the 1s in mask
         assert t_logits_slct.size() == s_logits_slct.size()
 
-        loss_ce = self.ce_loss_fct(F.log_softmax(s_logits_slct/self.temperature, dim=-1),
-                                   F.softmax(t_logits_slct/self.temperature, dim=-1)) * (self.temperature)**2
-        loss = self.alpha_ce*loss_ce
+        loss_ce = self.ce_loss_fct(F.log_softmax(s_logits_slct / self.temperature, dim=-1),
+                                   F.softmax(t_logits_slct / self.temperature, dim=-1)) * (self.temperature) ** 2
+        loss = self.alpha_ce * loss_ce
 
         if self.alpha_mlm > 0.:
             loss_mlm = self.lm_loss_fct(s_logits.view(-1, s_logits.size(-1)), lm_labels.view(-1))
@@ -398,21 +401,21 @@ class Distiller:
             loss += self.alpha_clm * loss_clm
 
         if self.alpha_mse > 0.:
-            loss_mse = self.mse_loss_fct(s_logits_slct, t_logits_slct)/s_logits_slct.size(0) # Reproducing batchmean reduction
+            loss_mse = self.mse_loss_fct(s_logits_slct, t_logits_slct) / s_logits_slct.size(0)  # Reproducing batchmean reduction
             loss += self.alpha_mse * loss_mse
         if self.alpha_cos > 0.:
-            s_hidden_states = s_hidden_states[-1]                              # (bs, seq_length, dim)
-            t_hidden_states = t_hidden_states[-1]                              # (bs, seq_length, dim)
-            mask = attention_mask.unsqueeze(-1).expand_as(s_hidden_states)     # (bs, seq_length, dim)
+            s_hidden_states = s_hidden_states[-1]  # (bs, seq_length, dim)
+            t_hidden_states = t_hidden_states[-1]  # (bs, seq_length, dim)
+            mask = attention_mask.unsqueeze(-1).expand_as(s_hidden_states)  # (bs, seq_length, dim)
             assert s_hidden_states.size() == t_hidden_states.size()
             dim = s_hidden_states.size(-1)
-            
-            s_hidden_states_slct = torch.masked_select(s_hidden_states, mask)        # (bs * seq_length * dim)
-            s_hidden_states_slct = s_hidden_states_slct.view(-1, dim)                # (bs * seq_length, dim)
-            t_hidden_states_slct = torch.masked_select(t_hidden_states, mask)        # (bs * seq_length * dim)
-            t_hidden_states_slct = t_hidden_states_slct.view(-1, dim)                # (bs * seq_length, dim)
-        
-            target = s_hidden_states_slct.new(s_hidden_states_slct.size(0)).fill_(1) # (bs * seq_length,)
+
+            s_hidden_states_slct = torch.masked_select(s_hidden_states, mask)  # (bs * seq_length * dim)
+            s_hidden_states_slct = s_hidden_states_slct.view(-1, dim)  # (bs * seq_length, dim)
+            t_hidden_states_slct = torch.masked_select(t_hidden_states, mask)  # (bs * seq_length * dim)
+            t_hidden_states_slct = t_hidden_states_slct.view(-1, dim)  # (bs * seq_length, dim)
+
+            target = s_hidden_states_slct.new(s_hidden_states_slct.size(0)).fill_(1)  # (bs * seq_length,)
             loss_cos = self.cosine_loss_fct(s_hidden_states_slct, t_hidden_states_slct, target)
             loss += self.alpha_cos * loss_cos
 
@@ -491,10 +494,10 @@ class Distiller:
             self.tensorboard.add_scalar(tag='parameter_std/' + param_name, scalar_value=param.data.std(), global_step=self.n_total_iter)
             if param.grad is None:
                 continue
-            self.tensorboard.add_scalar(tag="grad_mean/" + param_name, scalar_value=param.grad.data.mean(),global_step=self.n_total_iter)
+            self.tensorboard.add_scalar(tag="grad_mean/" + param_name, scalar_value=param.grad.data.mean(), global_step=self.n_total_iter)
             self.tensorboard.add_scalar(tag="grad_std/" + param_name, scalar_value=param.grad.data.std(), global_step=self.n_total_iter)
 
-        self.tensorboard.add_scalar(tag="losses/cum_avg_loss_epoch", scalar_value=self.total_loss_epoch/self.n_iter, global_step=self.n_total_iter)
+        self.tensorboard.add_scalar(tag="losses/cum_avg_loss_epoch", scalar_value=self.total_loss_epoch / self.n_iter, global_step=self.n_total_iter)
         self.tensorboard.add_scalar(tag="losses/loss", scalar_value=self.last_loss, global_step=self.n_total_iter)
         self.tensorboard.add_scalar(tag="losses/loss_ce", scalar_value=self.last_loss_ce, global_step=self.n_total_iter)
         if self.alpha_mlm > 0.:
@@ -506,9 +509,10 @@ class Distiller:
         if self.alpha_cos > 0.:
             self.tensorboard.add_scalar(tag="losses/loss_cos", scalar_value=self.last_loss_cos, global_step=self.n_total_iter)
         self.tensorboard.add_scalar(tag="learning_rate/lr", scalar_value=self.scheduler.get_lr()[0], global_step=self.n_total_iter)
-        
-        self.tensorboard.add_scalar(tag="global/memory_usage", scalar_value=psutil.virtual_memory()._asdict()['used']/1_000_000, global_step=self.n_total_iter)
-        self.tensorboard.add_scalar(tag="global/speed", scalar_value=time.time()-self.last_log, global_step=self.n_total_iter)
+
+        self.tensorboard.add_scalar(tag="global/memory_usage", scalar_value=psutil.virtual_memory()._asdict()['used'] / 1_000_000,
+                                    global_step=self.n_total_iter)
+        self.tensorboard.add_scalar(tag="global/speed", scalar_value=time.time() - self.last_log, global_step=self.n_total_iter)
 
     def end_epoch(self):
         """
@@ -519,7 +523,7 @@ class Distiller:
 
         if self.is_master:
             self.save_checkpoint(checkpoint_name=f'model_epoch_{self.epoch}.pth')
-            self.tensorboard.add_scalar(tag='epoch/loss', scalar_value=self.total_loss_epoch/self.n_iter, global_step=self.epoch)
+            self.tensorboard.add_scalar(tag='epoch/loss', scalar_value=self.total_loss_epoch / self.n_iter, global_step=self.epoch)
 
         self.epoch += 1
         self.n_sequences_epoch = 0
