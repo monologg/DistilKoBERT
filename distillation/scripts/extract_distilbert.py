@@ -25,7 +25,7 @@ if __name__ == '__main__':
         description="Extraction some layers of the full BertForMaskedLM or RObertaForMaskedLM for Transfer Learned Distillation")
     parser.add_argument("--model_type", default="bert", choices=["bert"])
     parser.add_argument("--model_name", default='kobert', type=str)
-    parser.add_argument("--dump_checkpoint", default='serialization_dir/tf_bert-base-uncased_0247911.pth', type=str)
+    parser.add_argument("--dump_checkpoint", default='serialization_dir/6_layer.pth', type=str)
     parser.add_argument("--vocab_transform", action='store_true')
     args = parser.parse_args()
 
