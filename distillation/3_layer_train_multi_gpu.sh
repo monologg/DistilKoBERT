@@ -29,4 +29,5 @@ python3 -m torch.distributed.launch \
         --data_file data/binarized_text.kobert.pickle \
         --token_counts data/token_counts.kobert.pickle \
         --fp16 \
+        --batch_size 20 \
         --student_pretrained_weights serialization_dir/3_layer.pth

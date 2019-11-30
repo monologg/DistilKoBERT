@@ -25,8 +25,9 @@ python3 -m torch.distributed.launch \
         --teacher_name kobert \
         --alpha_ce 0.33 --alpha_mlm 0.33 --alpha_cos 0.33 --alpha_clm 0.0 --mlm \
         --freeze_pos_embs \
-        --dump_path serialization_dir/3_layer \
+        --dump_path serialization_dir/6_layer \
         --data_file data/binarized_text.kobert.pickle \
         --token_counts data/token_counts.kobert.pickle \
         --fp16 \
+        --batch_size 20 \
         --student_pretrained_weights serialization_dir/6_layer.pth
