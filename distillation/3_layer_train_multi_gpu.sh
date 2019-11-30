@@ -20,7 +20,7 @@ python3 -m torch.distributed.launch \
         --force \
         --n_gpu $WORLD_SIZE \
         --student_type distilkobert \
-        --student_config training_configs/distilbert_3_layer.json \
+        --student_config training_configs/distilkobert_3_layer.json \
         --teacher_type kobert \
         --teacher_name kobert \
         --alpha_ce 0.33 --alpha_mlm 0.33 --alpha_cos 0.33 --alpha_clm 0.0 --mlm \
