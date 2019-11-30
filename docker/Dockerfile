@@ -26,7 +26,7 @@ RUN pip install sentencepiece>=0.1.82 \
 RUN rm -i -f *
 
 # Get Repository with data and kobert pretrained model
-RUN gdown https://drive.google.com/uc?id=1vcA-pNmSDebBooWtwWusaYaLcaVEW8M0
+RUN gdown https://drive.google.com/uc?id=1VNY7JJ1Cwtz7LZm1K-EwMt8WoqjHAG9U
 
 # Unzip the file
 RUN unzip DistilKoBERT.zip && rm -rf __MACOSX && rm DistilKoBERT.zip
