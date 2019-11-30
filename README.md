@@ -4,8 +4,8 @@ Distillation of KoBERT
 
 ## KoBERT for transformers library
 
-- Download the KoBERT pretrained model from this [Google Drive link](https://drive.google.com/open?id=13jTGc7KrvK9xp9e5GvYjyRz6bf2oJux8).
-- For using tokenizer, copy `tokenization_kobert.py` from `kobert` folder, and import `KoBERTTokenizer`.
+- [구글 드라이브 링크](https://drive.google.com/open?id=13jTGc7KrvK9xp9e5GvYjyRz6bf2oJux8)를 통해 KoBERT pretrained model을 다운받을 수 있습니다.
+- Tokenizer를 사용하려면, `kobert` 폴더에서 `tokenization_kobert.py` 파일을 복사한 후, `KoBertTokenizer`를 임포트하면 됩니다.
 
 ```python
 >>> from tokenization_kobert import KoBertTokenizer
