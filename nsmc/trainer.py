@@ -6,10 +6,10 @@ import numpy as np
 from seqeval.metrics import precision_score, recall_score, f1_score
 import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
-from transformers import BertConfig, AdamW, WarmupLinearSchedule
+from transformers import BertConfig, AdamW, WarmupLinearSchedule, DistilBertConfig, BertTokenizer
 
-from model import BertClassifier
-from utils import set_seed, compute_metrics, get_label
+from model import BertClassifier, DistilBertClassifier
+from utils import set_seed, compute_metrics, get_label, MODEL_CLASSES
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +24,10 @@ class Trainer(object):
         self.label_lst = get_label(args)
         self.num_labels = len(self.label_lst)
 
-        self.bert_config = BertConfig.from_pretrained(args.pretrained_model_name, num_labels=self.num_labels, finetuning_task=args.task)
-        self.model = BertClassifier(self.bert_config, args)
+        self.config_class, self.model_class, _ = MODEL_CLASSES[args.model_type]
+
+        self.bert_config = self.config_class.from_pretrained(args.model_name_or_path, num_labels=self.num_labels, finetuning_task=args.task)
+        self.model = self.model_class(self.bert_config, args)
 
         # GPU or CPU
         self.device = "cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu"
@@ -73,8 +75,9 @@ class Trainer(object):
                 batch = tuple(t.to(self.device) for t in batch)  # GPU or CPU
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
-                          'token_type_ids': batch[2],
                           'labels': batch[3]}
+                if self.args.model_type != 'distilkobert':
+                    inputs['token_type_ids'] = batch[2]
                 outputs = self.model(**inputs)
                 loss = outputs[0]
 
@@ -136,8 +139,9 @@ class Trainer(object):
             with torch.no_grad():
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
-                          'token_type_ids': batch[2],
                           'labels': batch[3]}
+                if self.args.model_type != 'distilkobert':
+                    inputs['token_type_ids'] = batch[2]
                 outputs = self.model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
 
@@ -184,9 +188,9 @@ class Trainer(object):
             raise Exception("Model doesn't exists! Train first!")
 
         try:
-            self.bert_config = BertConfig.from_pretrained(self.args.model_dir)
-            logger.info("***** Bert config loaded *****")
-            self.model = BertClassifier.from_pretrained(self.args.model_dir, config=self.bert_config, args=self.args)
+            self.bert_config = self.config_class.from_pretrained(self.args.model_dir)
+            logger.info("***** Config loaded *****")
+            self.model = self.model_class.from_pretrained(self.args.model_dir, config=self.bert_config, args=self.args)
             self.model.to(self.device)
             logger.info("***** Model Loaded *****")
         except:

@@ -86,7 +86,7 @@ class NsmcProcessor(object):
             line = line.split('\t')
             guid = "%s-%s" % (set_type, i)
             text_a = line[1]
-            if not self.args.no_lower_case:
+            if self.args.do_lower_case:
                 text_a = text_a.lower()
             label = int(line[2])
             if i % 1000 == 0:
@@ -106,7 +106,7 @@ class NsmcProcessor(object):
             file_to_read = self.args.dev_file
         elif mode == 'test':
             file_to_read = self.args.test_file
-            
+
         logger.info("LOOKING AT {}".format(os.path.join(self.args.data_dir, file_to_read)))
         return self._create_examples(self._read_file(os.path.join(self.args.data_dir, file_to_read)), mode)
 
@@ -181,28 +181,21 @@ def convert_examples_to_features(examples, max_seq_len, tokenizer,
     return features
 
 
-def load_and_cache_examples(args, tokenizer, mode):
+def load_examples(args, tokenizer, mode):
     processor = processors[args.task](args)
 
-    # Load data features from cache or dataset file
-    cached_features_file = os.path.join(args.data_dir, 'cached_{}_{}'.format(args.task, mode))
-    if os.path.exists(cached_features_file):
-        logger.info("Loading features from cached file %s", cached_features_file)
-        features = torch.load(cached_features_file)
+    # Load data features from dataset file
+    logger.info("Creating features from dataset file at %s", args.data_dir)
+    if mode == "train":
+        examples = processor.get_examples("train")
+    elif mode == "dev":
+        examples = processor.get_examples("dev")
+    elif mode == "test":
+        examples = processor.get_examples("test")
     else:
-        logger.info("Creating features from dataset file at %s", args.data_dir)
-        if mode == "train":
-            examples = processor.get_examples("train")
-        elif mode == "dev":
-            examples = processor.get_examples("dev")
-        elif mode == "test":
-            examples = processor.get_examples("test")
-        else:
-            raise Exception("For mode, Only train, dev, test is available")
+        raise Exception("For mode, Only train, dev, test is available")
 
-        features = convert_examples_to_features(examples, args.max_seq_len, tokenizer)
-        logger.info("Saving features into cached file %s", cached_features_file)
-        torch.save(features, cached_features_file)
+    features = convert_examples_to_features(examples, args.max_seq_len, tokenizer)
 
     # Convert to Tensors and build dataset
     all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)

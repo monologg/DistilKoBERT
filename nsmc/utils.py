@@ -7,13 +7,30 @@ import numpy as np
 from sklearn.metrics import f1_score
 from tokenization_kobert import KoBertTokenizer
 
+from transformers import BertConfig, DistilBertConfig, BertTokenizer
+from tokenization_kobert import KoBertTokenizer
+
+from model import BertClassifier, DistilBertClassifier
+
+MODEL_CLASSES = {
+    'kobert': (BertConfig, BertClassifier, KoBertTokenizer),
+    'distilkobert': (DistilBertConfig, DistilBertClassifier, KoBertTokenizer),
+    'bert': (BertConfig, BertClassifier, BertTokenizer)
+}
+
+MODEL_PATH_MAP = {
+    'kobert': 'kobert',
+    'distilkobert': 'distilkobert',
+    'bert': 'bert-base-multilingual-cased'
+}
+
 
 def get_label(args):
     return [0, 1]
 
 
 def load_tokenizer(args):
-    return KoBertTokenizer.from_pretrained(args.pretrained_model_name)
+    return MODEL_CLASSES[args.model_type][2].from_pretrained(args.model_name_or_path)
 
 
 def init_logger():

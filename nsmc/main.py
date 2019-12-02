@@ -1,16 +1,16 @@
 import argparse
 
 from trainer import Trainer
-from utils import init_logger, load_tokenizer
-from data_loader import load_and_cache_examples
+from utils import init_logger, load_tokenizer, MODEL_CLASSES, MODEL_PATH_MAP
+from data_loader import load_examples
 
 
 def main(args):
     init_logger()
     tokenizer = load_tokenizer(args)
-    train_dataset = load_and_cache_examples(args, tokenizer, mode="train")
+    train_dataset = load_examples(args, tokenizer, mode="train")
     dev_dataset = None
-    test_dataset = load_and_cache_examples(args, tokenizer, mode="test")
+    test_dataset = load_examples(args, tokenizer, mode="test")
     trainer = Trainer(args, train_dataset, dev_dataset, test_dataset)
 
     if args.do_train:
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     parser.add_argument("--train_file", default="ratings_train.txt", type=str, help="Train file")
     parser.add_argument("--test_file", default="ratings_test.txt", type=str, help="Test file")
 
-    parser.add_argument("--pretrained_model_name", default="kobert", required=False, help="Pretrained model name")
+    parser.add_argument("--model_type", default="kobert", type=str, help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
 
     parser.add_argument('--seed', type=int, default=42, help="random seed for initialization")
     parser.add_argument("--batch_size", default=32, type=int, help="Batch size for training and evaluation.")
@@ -46,13 +46,15 @@ if __name__ == '__main__':
     parser.add_argument("--warmup_steps", default=0, type=int, help="Linear warmup over warmup_steps.")
     parser.add_argument("--dropout_rate", default=0.1, type=float, help="Dropout for fully-connected layers")
 
-    parser.add_argument('--logging_steps', type=int, default=10000, help="Log every X updates steps.")
-    parser.add_argument('--save_steps', type=int, default=3000, help="Save checkpoint every X updates steps.")
+    parser.add_argument('--logging_steps', type=int, default=2000, help="Log every X updates steps.")
+    parser.add_argument('--save_steps', type=int, default=2000, help="Save checkpoint every X updates steps.")
 
     parser.add_argument("--do_train", action="store_true", help="Whether to run training.")
     parser.add_argument("--do_eval", action="store_true", help="Whether to run eval on the test set.")
-    parser.add_argument("--no_lower_case", action="store_true", help="Whether not to lowercase the text (For cased model)")
+    parser.add_argument("--do_lower_case", action="store_true", help="Whether to lowercase the text (For uncased model)")
     parser.add_argument("--no_cuda", action="store_true", help="Avoid using CUDA when available")
 
     args = parser.parse_args()
+
+    args.model_name_or_path = MODEL_PATH_MAP[args.model_type]
     main(args)
