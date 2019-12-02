@@ -5,7 +5,6 @@ import logging
 import torch
 import numpy as np
 from sklearn.metrics import f1_score
-from tokenization_kobert import KoBertTokenizer
 
 from transformers import BertConfig, DistilBertConfig, BertTokenizer
 from tokenization_kobert import KoBertTokenizer

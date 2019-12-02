@@ -3,12 +3,10 @@ import logging
 from tqdm import tqdm, trange
 
 import numpy as np
-from seqeval.metrics import precision_score, recall_score, f1_score
 import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
-from transformers import BertConfig, AdamW, WarmupLinearSchedule, DistilBertConfig, BertTokenizer
+from transformers import AdamW, WarmupLinearSchedule
 
-from model import BertClassifier, DistilBertClassifier
 from utils import set_seed, compute_metrics, get_label, MODEL_CLASSES
 
 logger = logging.getLogger(__name__)
