@@ -28,9 +28,9 @@ TBD
 
 ## Result
 
-|      | KoBERT | DistilKoBERT | Bert-base-multilingual-cased | FastText |
-| ---- | ------ | ------------ | ---------------------------- | -------- |
-| NSMC | 89.63  | 87.65        | TBD                          | 85.50    |
+|      | KoBERT | DistilKoBERT (3 layer) | Bert-base-multilingual-cased | FastText |
+| ---- | ------ | ---------------------- | ---------------------------- | -------- |
+| NSMC | 89.63  | 87.71                  | TBD                          | 85.50    |
 
 ## Reference
 
