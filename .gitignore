@@ -112,6 +112,3 @@ distillation/data/
 distillation/serialization_dir
 
 .DS_Store
-
-kobert/
-distilkobert/
