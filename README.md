@@ -66,9 +66,10 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 
 ## Result
 
-|      | KoBERT | DistilKoBERT (3 layer) | Bert-base-multilingual-cased | FastText |
-| ---- | ------ | ---------------------- | ---------------------------- | -------- |
-| NSMC | 89.63  | 87.71                  | 87.07                        | 85.50    |
+|                 | KoBERT | DistilKoBERT (3 layer) | Bert-base-multilingual-cased | FastText |
+| --------------- | ------ | ---------------------- | ---------------------------- | -------- |
+| Model Size (MB) | 351    | 108                    | 681                          | 2        |
+| NSMC (%)        | 89.63  | 87.71                  | 87.07                        | 85.50    |
 
 ## Reference
 
