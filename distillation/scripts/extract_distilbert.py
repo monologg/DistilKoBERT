@@ -27,6 +27,7 @@ if __name__ == '__main__':
     parser.add_argument("--model_name", default='kobert', type=str)
     parser.add_argument("--dump_checkpoint", default='serialization_dir/6_layer.pth', type=str)
     parser.add_argument("--vocab_transform", action='store_true')
+    parser.add_argument("--num_layer", default=3, type=int)
     args = parser.parse_args()
 
     if args.model_type == 'bert':
@@ -46,8 +47,17 @@ if __name__ == '__main__':
             state_dict[f'{prefix}.embeddings.LayerNorm.{w}']
 
     std_idx = 0
-    for teacher_idx in [0, 2, 4, 7, 9, 11]:
-    # for teacher_idx in [0, 4, 8]:
+    layer_lst = []
+    if args.num_layer == 6:
+        layer_lst = [0, 2, 4, 7, 9, 11]
+    elif args.num_layer == 3:
+        layer_lst = [0, 4, 8]
+    elif args.num_layer == 1:
+        layer_lst = [5]
+    else:
+        raise Exception("Num of layer only 1, 3, 6")
+
+    for teacher_idx in layer_lst:
         for w in ['weight', 'bias']:
             compressed_sd[f'distilbert.transformer.layer.{std_idx}.attention.q_lin.{w}'] = \
                 state_dict[f'{prefix}.encoder.layer.{teacher_idx}.attention.self.query.{w}']
