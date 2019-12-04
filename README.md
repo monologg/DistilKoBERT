@@ -25,6 +25,8 @@ Distillation of KoBERT
 ## Pretraining DistilKoBERT
 
 - [구글 드라이브 링크](https://drive.google.com/open?id=15Ro2LKfXEtdGdRTx15iraxREiFnD5Zig)를 통해 DistilKoBERT pretrained model을 다운받을 수 있습니다.
+- 기존의 12 layer를 3 layer로 줄였으며, 기타 configuration은 kobert를 그대로 따랐습니다.
+- Pretraining Corpus는 위키, 나무위키, 뉴스 등 약 3GB의 데이터를 사용했으며, 2 epoch 학습하였습니다. (추후 더 많은 데이터로 학습 예정)
 
 ## Install DistilKoBERT
 
@@ -73,3 +75,4 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 - [KoBERT](https://github.com/SKTBrain/KoBERT)
 - [Huggingface Transformers](https://github.com/huggingface/transformers)
 - [DistilBERT](https://github.com/huggingface/transformers/blob/master/examples/distillation/README.md)
+- [DistilBERT Paper](https://arxiv.org/abs/1910.01108)
