@@ -32,14 +32,13 @@ ENV LANG C.UTF-8
 # Install pip
 RUN curl https://bootstrap.pypa.io/get-pip.py | python
 
+# Working directory
+COPY ../server /app
+WORKDIR /app
+
 # Install requirements
-RUN pip install sentencepiece>=0.1.82 \
-    transformers==2.1.1 \
-    gitpython==3.0.2 \
-    tensorboard>=1.14.0 \
-    tensorboardX==1.8 \
-    psutil==5.6.3 \
-    scipy==1.3.1 \
-    scikit-learn>=0.20.0 \
-    seqeval>=0.0.12 \
-    gdown
+RUN pip3 install -r requirements
+
+# Run the server
+ENTRYPOINT ["python3"]
+CMD ["app.py --model_type nsmc --add_special_tokens --no_cuda"]
