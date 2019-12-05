@@ -1,8 +1,30 @@
-FROM pytorch/pytorch:1.1.0-cuda10.0-cudnn7.5-runtime
-MAINTAINER Jangwon Park "adieujw@gmail.com"
+FROM ubuntu:18.04
 
-# Common steps (must be the same in the CPU and GPU images)
-RUN apt-get -y update && apt-get -y upgrade && apt-get install -y vim unzip
+# Install some basic utilities
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    sudo \
+    git \
+    bzip2 \
+    libx11-6 \
+    vim \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a working directory
+RUN mkdir /app
+WORKDIR /app
+
+# Create a non-root user and switch to it
+RUN adduser --disabled-password --gecos '' --shell /bin/bash user \
+    && chown -R user:user /app
+RUN echo "user ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-user
+USER user
+
+# All users can use /home/user as their home directory
+ENV HOME=/home/user
+RUN chmod 777 /home/user
 
 ### Without this Python thinks we're ASCII and unicode chars fail
 ENV LANG C.UTF-8
@@ -21,12 +43,3 @@ RUN pip install sentencepiece>=0.1.82 \
     scikit-learn>=0.20.0 \
     seqeval>=0.0.12 \
     gdown
-
-# Erase redundant logs at working directory
-RUN rm -i -f *
-
-# Get Repository with data and kobert pretrained model
-RUN gdown https://drive.google.com/uc?id=1VNY7JJ1Cwtz7LZm1K-EwMt8WoqjHAG9U
-
-# Unzip the file
-RUN unzip DistilKoBERT.zip && rm -rf __MACOSX && rm DistilKoBERT.zip

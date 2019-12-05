@@ -28,13 +28,15 @@ Distillation of KoBERT
 - 기존의 12 layer를 3 layer로 줄였으며, 기타 configuration은 kobert를 그대로 따랐습니다.
 - Pretraining Corpus는 위키, 나무위키, 뉴스 등 약 3GB의 데이터를 사용했으며, 2 epoch 학습하였습니다. (추후 더 많은 데이터로 학습 예정)
 
-## Install DistilKoBERT
+## DistilKobert python library
+
+### Install DistilKoBERT
 
 ```bash
 $ pip3 install distilkobert
 ```
 
-## How to use
+### How to Use
 
 ```python
 >>> import torch
@@ -64,12 +66,12 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 [2, 4958, 6855, 2046, 7088, 1050, 7843, 54, 3]
 ```
 
-## Result
+## Result on Sub-task
 
 |                 | KoBERT | DistilKoBERT (3 layer) | Bert-base-multilingual-cased | FastText |
 | --------------- | ------ | ---------------------- | ---------------------------- | -------- |
 | Model Size (MB) | 351    | 108                    | 681                          | 2        |
-| NSMC (%)        | 89.63  | 87.71                  | 87.07                        | 85.50    |
+| NSMC (%)        | 89.63  | 88.08                  | 87.07                        | 85.50    |
 
 ## Reference
 
@@ -77,3 +79,10 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 - [Huggingface Transformers](https://github.com/huggingface/transformers)
 - [DistilBERT](https://github.com/huggingface/transformers/blob/master/examples/distillation/README.md)
 - [DistilBERT Paper](https://arxiv.org/abs/1910.01108)
+- [bert-as-service](https://github.com/hanxiao/bert-as-service)
+
+## TBD
+
+- [ ] Train DistilKoALBERT
+- [ ] Build API Server
+- [ ] Make Dockerfile for server
