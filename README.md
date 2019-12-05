@@ -85,5 +85,5 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 ## TBD
 
 - [ ] Train DistilKoALBERT
-- [O] Build API Server
-- [O] Make Dockerfile for server
+- [X] Build API Server
+- [X] Make Dockerfile for server
