@@ -36,6 +36,8 @@ def convert_texts_to_tensors(texts, max_seq_len, add_special_tokens, no_cuda=Fal
     attention_mask = []
     for text in texts:
         input_id = tokenizer.encode(text, add_special_tokens=add_special_tokens)
+        input_id = input_id[:max_seq_len]
+
         attention_id = [1] * len(input_id)
 
         # Zero padding
