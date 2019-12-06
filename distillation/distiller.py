@@ -26,7 +26,7 @@ import psutil
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from transformers import AdamW, WarmupLinearSchedule
+from transformers import AdamW, get_linear_schedule_with_warmup
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import RandomSampler, BatchSampler, DataLoader
 
@@ -107,8 +107,10 @@ class Distiller:
         self.last_loss_ce = 0
         self.last_loss_mlm = 0
         self.last_loss_clm = 0
-        if self.alpha_mse > 0.: self.last_loss_mse = 0
-        if self.alpha_cos > 0.: self.last_loss_cos = 0
+        if self.alpha_mse > 0.:
+            self.last_loss_mse = 0
+        if self.alpha_cos > 0.:
+            self.last_loss_cos = 0
         self.last_log = 0
 
         self.ce_loss_fct = nn.KLDivLoss(reduction='batchmean')
@@ -137,9 +139,9 @@ class Distiller:
                                betas=(0.9, 0.98))
 
         warmup_steps = math.ceil(num_train_optimization_steps * params.warmup_prop)
-        self.scheduler = WarmupLinearSchedule(self.optimizer,
-                                              warmup_steps=warmup_steps,
-                                              t_total=num_train_optimization_steps)
+        self.scheduler = get_linear_schedule_with_warmup(self.optimizer,
+                                                         num_warmup_steps=warmup_steps,
+                                                         num_training_steps=num_train_optimization_steps)
 
         if self.fp16:
             try:
@@ -316,13 +318,15 @@ class Distiller:
         """
         The real training loop.
         """
-        if self.is_master: logger.info('Starting training')
+        if self.is_master:
+            logger.info('Starting training')
         self.last_log = time.time()
         self.student.train()
         self.teacher.eval()
 
         for _ in range(self.params.n_epoch):
-            if self.is_master: logger.info(f'--- Starting epoch {self.epoch}/{self.params.n_epoch - 1}')
+            if self.is_master:
+                logger.info(f'--- Starting epoch {self.epoch}/{self.params.n_epoch - 1}')
             if self.multi_gpu:
                 torch.distributed.barrier()
 
@@ -342,7 +346,8 @@ class Distiller:
                                       'Avg_cum_loss': f'{self.total_loss_epoch / self.n_iter:.2f}'})
             iter_bar.close()
 
-            if self.is_master: logger.info(f'--- Ending epoch {self.epoch}/{self.params.n_epoch - 1}')
+            if self.is_master:
+                logger.info(f'--- Ending epoch {self.epoch}/{self.params.n_epoch - 1}')
             self.end_epoch()
 
         if self.is_master:
