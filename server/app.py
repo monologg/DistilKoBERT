@@ -29,6 +29,7 @@ def init_model():
     global tokenizer, model
     model = MODEL_CLASSES[args.model_type]['model'](no_cuda=args.no_cuda)
     tokenizer = MODEL_CLASSES[args.model_type]['tokenizer']()
+    model.eval()
 
 
 def convert_texts_to_tensors(texts, max_seq_len, add_special_tokens, no_cuda=False):
@@ -71,7 +72,8 @@ def predict_distilkobert():
     texts = rcv_data['texts']
     max_seq_len = rcv_data['max_seq_len']
     input_ids, attention_mask = convert_texts_to_tensors(texts, max_seq_len, args.add_special_tokens)
-    outputs = model(input_ids, attention_mask)
+    with torch.no_grad():
+        outputs = model(input_ids, attention_mask)
     hidden_state = outputs[0].tolist()
 
     total_time = round(time.time() - start_t, 2)
