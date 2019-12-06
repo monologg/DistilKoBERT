@@ -68,10 +68,10 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 
 ## Result on Sub-task
 
-|                 | KoBERT | DistilKoBERT (3 layer) | Bert-base-multilingual-cased | FastText |
-| --------------- | ------ | ---------------------- | ---------------------------- | -------- |
-| Model Size (MB) | 351    | 108                    | 681                          | 2        |
-| NSMC (%)        | 89.63  | 88.08                  | 87.07                        | 85.50    |
+|                 | KoBERT | DistilKoBERT (3 layer) | DistilKoBERT (1 layer) | Bert-base-multilingual-cased | FastText |
+| --------------- | ------ | ---------------------- | ---------------------- | ---------------------------- | -------- |
+| Model Size (MB) | 351    | 108                    | 54                     | 681                          | 2        |
+| NSMC (%)        | 89.63  | 88.21                  | 84.24                  | 87.07                        | 85.50    |
 
 ## Reference
 
@@ -85,5 +85,5 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 ## TBD
 
 - [ ] Train DistilKoALBERT
-- [X] Build API Server
-- [X] Make Dockerfile for server
+- [x] Build API Server
+- [x] Make Dockerfile for server

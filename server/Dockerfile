@@ -28,7 +28,9 @@ WORKDIR /app
 # Install requirements
 RUN pip3 install -r requirements.txt --no-cache-dir
 
+# Save pretrained model in advance
+RUN python3 download_models.py
+
 # Run the server
-EXPOSE 12345
-CMD [ "python3", "app.py", "--model_type", "nsmc", "--add_special_tokens", "--no_cuda", "--port_num", "12345"]
-# RUN python3 app.py --model_type nsmc --add_special_tokens --no_cuda
+EXPOSE 80
+CMD [ "python3", "app.py", "--model_type", "nsmc", "--add_special_tokens", "--no_cuda", "--port_num", "80"]
