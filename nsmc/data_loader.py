@@ -63,7 +63,7 @@ class InputFeatures(object):
 
 
 class NsmcProcessor(object):
-    """Processor for the JointBERT data set """
+    """Processor for the NSMC data set """
 
     def __init__(self, args):
         self.args = args
