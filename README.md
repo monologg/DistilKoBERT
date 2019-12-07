@@ -76,8 +76,18 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 
 [![Run on Ainize](https://ainize.ai/static/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=github.com/monologg/DistilKoBERT)
 
+### 1. API Call
+
+여러 개의 리뷰에 대한 Prediction 가능
+
 ```bash
 curl -X POST -H "Content-Type: application/json" -d '{"texts":["이 영화 죽여주는데?", "핵강추", "0", "우웩", "ㅈㄴ 조아"], "max_seq_len":20}' https://endpoint.ainize.ai/monologg/distilkobert/predict
+```
+
+### 2. Testing on website
+
+```bash
+https://endpoint.ainize.ai/monologg/distilkobert/test
 ```
 
 ## Reference
