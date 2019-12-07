@@ -72,8 +72,6 @@ def get_review():
 
 @app.route("/result", methods=["POST"])
 def predict_movie_review():
-    rcv_data = request.data
-    print(rcv_data)
     # Predicting on sentence
     texts = [request.form['review']]
     max_seq_len = 30
