@@ -1,0 +1,32 @@
+openapi: 3.0.0 # Open api version
+
+info: # Set basic infomation
+  title: distilkobert
+  version: 0.1.0
+
+servers: # Set your server endpoint
+  - url: https://endpoint.ainize.ai/monologg/distilkobert
+
+paths:
+  /predict: # GET method path
+    get:
+      parameters: # Set parameter values here
+        - name: text # Set parameter name
+          in: query # Select amongst query, header, path, and cookie
+          required: true
+          allowReserved: true # Option for percent-encoding, default; false
+        - name: max_seq_len
+          in: query
+          required: true
+          allowReserved: true # Option for percent-encoding, default; false
+      responses: # Set response
+        "200":
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+        "400":
+          description: Bad Request Error
+        default:
+          description: Unexpected Error

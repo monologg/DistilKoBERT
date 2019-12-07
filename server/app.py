@@ -8,10 +8,6 @@ from distilkobert import get_distilkobert_model, get_tokenizer, get_nsmc_model
 
 
 MODEL_CLASSES = {
-    'distilkobert': {
-        'model': get_distilkobert_model,
-        'tokenizer': get_tokenizer
-    },
     'nsmc': {
         'model': get_nsmc_model,
         'tokenizer': get_tokenizer
@@ -57,24 +53,14 @@ def convert_texts_to_tensors(texts, max_seq_len, add_special_tokens, no_cuda=Fal
     return input_ids, attention_mask
 
 
-@app.route("/predict", methods=["POST"])
+@app.route("/predict", methods=["POST", "GET"])
 def predict():
-    if args.model_type == 'distilkobert':
-        return predict_distilkobert()
-    elif args.model_type == 'nsmc':
-        return predict_nsmc()
+    # Prediction
+    text = request.args.get('text')
+    max_seq_len = int(request.args.get('max_seq_len'))
 
+    texts = [text]
 
-@app.route("/test")
-def get_review():
-    return render_template("result.html")
-
-
-@app.route("/result", methods=["POST"])
-def predict_movie_review():
-    # Predicting on sentence
-    texts = [request.form['review']]
-    max_seq_len = 30
     input_ids, attention_mask = convert_texts_to_tensors(texts, max_seq_len, args.add_special_tokens)
     outputs = model(input_ids, attention_mask, None)
     logits = outputs[0]
@@ -82,55 +68,16 @@ def predict_movie_review():
     preds = logits.detach().cpu().tolist()
     preds = [0 if pred[0] > pred[1] else 1 for pred in preds]
 
-    # Render on html
     return """
     <h3>"{}" : {}</h3>
     """.format(texts[0], "Positive" if preds[0] == 1 else "Negative")
-
-
-def predict_distilkobert():
-    rcv_data = request.get_json()
-    start_t = time.time()
-    # Prediction
-    texts = rcv_data['texts']
-    max_seq_len = rcv_data['max_seq_len']
-    input_ids, attention_mask = convert_texts_to_tensors(texts, max_seq_len, args.add_special_tokens)
-    with torch.no_grad():
-        outputs = model(input_ids, attention_mask)
-    hidden_state = outputs[0].tolist()
-
-    total_time = round(time.time() - start_t, 2)
-    return jsonify(
-        output=hidden_state,
-        time=total_time
-    )
-
-
-def predict_nsmc():
-    rcv_data = request.get_json()
-    start_t = time.time()
-    # Prediction
-    texts = rcv_data['texts']
-    max_seq_len = rcv_data['max_seq_len']
-    input_ids, attention_mask = convert_texts_to_tensors(texts, max_seq_len, args.add_special_tokens)
-    outputs = model(input_ids, attention_mask, None)
-    logits = outputs[0]
-
-    preds = logits.detach().cpu().tolist()
-    preds = [0 if pred[0] > pred[1] else 1 for pred in preds]
-
-    total_time = round(time.time() - start_t, 2)
-    return jsonify(
-        output=preds,
-        time=total_time
-    )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-p", "--port_num", type=int, default=12345, help="Port Number")
-    parser.add_argument("-m", "--model_type", type=str, default="distilkobert",
+    parser.add_argument("-m", "--model_type", type=str, default="nsmc",
                         help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
     parser.add_argument("-s", "--add_special_tokens", action="store_true", help="Whether to add CLS and SEP token on each texts automatically")
     parser.add_argument("-n", "--no_cuda", action="store_true", help="Avoid using CUDA when available")
