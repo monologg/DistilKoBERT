@@ -72,6 +72,14 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 | Model Size (MB) | 351    | 108                    | 681                 | 2        |
 | NSMC (%)        | 89.63  | 88.28                  | 87.07               | 85.50    |
 
+## Sentiment analysis for movie reviews using DistilKoBERT
+
+[![Run on Ainize](https://ainize.ai/static/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=github.com/monologg/DistilKoBERT)
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"texts":["이 영화 죽여주는데?", "핵강추", "0", "우웩", "ㅈㄴ 조아"], "max_seq_len":20}' https://endpoint.ainize.ai/monologg/distilkobert/predict
+```
+
 ## Reference
 
 - [KoBERT](https://github.com/SKTBrain/KoBERT)
