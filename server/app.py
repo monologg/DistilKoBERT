@@ -2,7 +2,7 @@ import time
 import argparse
 
 import torch
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 from distilkobert import get_distilkobert_model, get_tokenizer, get_nsmc_model
 
@@ -63,6 +63,31 @@ def predict():
         return predict_distilkobert()
     elif args.model_type == 'nsmc':
         return predict_nsmc()
+
+
+@app.route("/test")
+def get_review():
+    return render_template("result.html")
+
+
+@app.route("/result", methods=["POST"])
+def predict_movie_review():
+    rcv_data = request.data
+    print(rcv_data)
+    # Predicting on sentence
+    texts = [request.form['review']]
+    max_seq_len = 30
+    input_ids, attention_mask = convert_texts_to_tensors(texts, max_seq_len, args.add_special_tokens)
+    outputs = model(input_ids, attention_mask, None)
+    logits = outputs[0]
+
+    preds = logits.detach().cpu().tolist()
+    preds = [0 if pred[0] > pred[1] else 1 for pred in preds]
+
+    # Render on html
+    return """
+    <h3>"{}" : {}</h3>
+    """.format(texts[0], "Positive" if preds[0] == 1 else "Negative")
 
 
 def predict_distilkobert():
