@@ -72,26 +72,6 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 | Model Size (MB) | 351    | 108                    | 681                 | 2        |
 | NSMC (%)        | 89.63  | 88.28                  | 87.07               | 85.50    |
 
-## Sentiment analysis for movie reviews using DistilKoBERT
-
-[![Run on Ainize](https://ainize.ai/static/images/run_on_ainize_button.svg)](https://ainize.web.app/redirect?git_repo=github.com/monologg/DistilKoBERT)
-
-1. `text` : like caption in instagram
-2. `max_seq_len`: maximum sequence length
-
-```bash
-https://endpoint.ainize.ai/monologg/distilkobert/predict?text={text}&max_seq_len={max_seq_len}
-```
-
-```bash
-##### Examples #####
-# 1. curl
-curl -X GET "https://endpoint.ainize.ai/monologg/hashtag/predict?image_id=1DGu9R5a9jpkY-fy79VrGFmCdJigzTMC-&text=20%20days%20till%20Christmas%20%F0%9F%98%8D%F0%9F%8E%85&max_seq_len=20&n_label=3"
-
-# 2. URL
-https://endpoint.ainize.ai/monologg/distilkobert/predict?text=%EC%98%81%ED%99%94%20%EC%99%84%EC%A0%84%20%EB%B3%84%EB%A1%9C&max_seq_len=20
-```
-
 ## Reference
 
 - [KoBERT](https://github.com/SKTBrain/KoBERT)
