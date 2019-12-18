@@ -1,6 +1,6 @@
 # DistilKoBERT
 
-Distillation of KoBERT (SKTBrain KoBERT 경량화)
+Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 
 ## KoBERT for transformers library
 
@@ -26,7 +26,8 @@ Distillation of KoBERT (SKTBrain KoBERT 경량화)
 ## Pretraining DistilKoBERT
 
 - 기존의 12 layer를 **3 layer**로 줄였으며, 기타 configuration은 kobert를 그대로 따랐습니다.
-- layer 초기화의 경우 기존 KoBERT의 1, 5, 9번째 layer의 값을 그대로 사용하였습니다.
+  - [원 논문](https://arxiv.org/abs/1910.01108)은 6 layer를 채택하였습니다
+- Layer 초기화의 경우 기존 KoBERT의 1, 5, 9번째 layer 값을 그대로 사용하였습니다.
 - Pretraining Corpus는 한국어 위키, 나무위키, 뉴스 등 약 6GB의 데이터를 사용했으며, 2.5 epoch 학습하였습니다.
 
 ## DistilKoBERT for transformers library
