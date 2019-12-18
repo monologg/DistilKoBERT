@@ -1,6 +1,6 @@
 # DistilKoBERT
 
-Distillation of KoBERT (KoBERT 경량화)
+Distillation of KoBERT (SKTBrain KoBERT 경량화)
 
 ## KoBERT for transformers library
 
@@ -91,9 +91,3 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 - [DistilBERT Paper](https://arxiv.org/abs/1910.01108)
 - [bert-as-service](https://github.com/hanxiao/bert-as-service)
 - [딥러닝으로-동네생활-게시글-필터링하기](https://medium.com/daangn/%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%EB%8F%99%EB%84%A4%EC%83%9D%ED%99%9C-%EA%B2%8C%EC%8B%9C%EA%B8%80-%ED%95%84%ED%84%B0%EB%A7%81%ED%95%98%EA%B8%B0-263cfe4bc58d)
-
-## TBD
-
-- [ ] Train DistilKoALBERT
-- [x] Build API Server
-- [x] Make Dockerfile for server
