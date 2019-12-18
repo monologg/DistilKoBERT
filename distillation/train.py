@@ -210,7 +210,7 @@ def main():
 
     ### TOKENIZER ###
     if teacher_tokenizer_class == KoBertTokenizer:
-        tokenizer = KoBertTokenizer.from_pretrained('kobert')
+        tokenizer = KoBertTokenizer.from_pretrained('monologg/kobert')
     else:
         tokenizer = teacher_tokenizer_class.from_pretrained(args.teacher_name)
     special_tok_ids = {}

@@ -18,8 +18,8 @@ MODEL_CLASSES = {
 }
 
 MODEL_PATH_MAP = {
-    'kobert': 'kobert',
-    'distilkobert': 'distilkobert',
+    'kobert': 'monologg/kobert',
+    'distilkobert': 'monologg/distilkobert',
     'bert': 'bert-base-multilingual-cased'
 }
 
