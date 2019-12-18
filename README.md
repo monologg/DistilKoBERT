@@ -1,21 +1,21 @@
 # DistilKoBERT
 
-Distillation of KoBERT
+Distillation of KoBERT (KoBERT 경량화)
 
 ## KoBERT for transformers library
 
-- [구글 드라이브 링크](https://drive.google.com/open?id=13jTGc7KrvK9xp9e5GvYjyRz6bf2oJux8)를 통해 KoBERT pretrained model을 다운받을 수 있습니다.
+- transformers v2.2.2부터 개인이 만든 모델을 transformers를 통해 직접 업로드/다운로드하여 사용할 수 있습니다
 
 ```python
 >>> from transformers import BertModel
->>> model = BertModel.from_pretrained('kobert')
+>>> model = BertModel.from_pretrained('monologg/kobert')
 ```
 
-- Tokenizer를 사용하려면, `kobert` 폴더에서 `tokenization_kobert.py` 파일을 복사한 후, `KoBertTokenizer`를 임포트하면 됩니다.
+- Tokenizer를 사용하려면, 루트 디렉토리의 `tokenization_kobert.py` 파일을 복사한 후, `KoBertTokenizer`를 임포트하면 됩니다.
 
 ```python
 >>> from tokenization_kobert import KoBertTokenizer
->>> tokenizer = KoBertTokenizer.from_pretrained('kobert')
+>>> tokenizer = KoBertTokenizer.from_pretrained('monologg/kobert')
 >>> tokenizer.tokenize("[CLS] 한국어 모델을 공유합니다. [SEP]")
 ['[CLS]', '▁한국', '어', '▁모델', '을', '▁공유', '합니다', '.', '[SEP]']
 >>> tokenizer.convert_tokens_to_ids(['[CLS]', '▁한국', '어', '▁모델', '을', '▁공유', '합니다', '.', '[SEP]'])
@@ -24,8 +24,19 @@ Distillation of KoBERT
 
 ## Pretraining DistilKoBERT
 
-- 기존의 12 layer를 3 layer로 줄였으며, 기타 configuration은 kobert를 그대로 따랐습니다.
+- 기존의 12 layer를 **3 layer**로 줄였으며, 기타 configuration은 kobert를 그대로 따랐습니다.
 - Pretraining Corpus는 한국어 위키, 나무위키, 뉴스 등 약 6GB의 데이터를 사용했으며, 2.5 epoch 학습하였습니다.
+
+## DistilKoBERT for transformers library
+
+- Tokenizer를 사용하려면, 루트 디렉토리의 `tokenization_kobert.py` 파일을 복사한 후, `KoBertTokenizer`를 임포트하면 됩니다.
+
+```python
+>>> from transformers import DistilBertModel
+>>> from tokenization_kobert import KoBertTokenizer
+>>> model = DistilBertModel.from_pretrained('monologg/distilkobert')
+>>> tokenizer = KoBertTokenizer.from_pretrained('monologg/distilkobert')
+```
 
 ## DistilKobert python library
 
@@ -41,7 +52,7 @@ $ pip3 install distilkobert
 >>> import torch
 >>> from distilkobert import get_distilkobert_model
 
->>> model = get_distilkobert_model()
+>>> model = get_distilkobert_model(no_cuda=True)
 >>> input_ids = torch.LongTensor([[31, 51, 99], [15, 5, 0]])
 >>> attention_mask = torch.LongTensor([[1, 1, 1], [1, 1, 0]])
 >>> last_layer_hidden_state, _ = model(input_ids, attention_mask)
