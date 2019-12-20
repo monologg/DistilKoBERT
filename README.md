@@ -35,6 +35,14 @@ Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 - Tokenizer를 사용하려면, 루트 디렉토리의 `tokenization_kobert.py` 파일을 복사한 후, `KoBertTokenizer`를 임포트하면 됩니다.
   - KoBERT와 DistilKoBERT 모두 동일한 토크나이저를 사용합니다.
 
+### Dependencies
+
+- torch==1.1.0
+- transformers==2.2.2
+- sentencepiece>=0.1.82
+
+### How to Use
+
 ```python
 >>> from transformers import DistilBertModel
 >>> from tokenization_kobert import KoBertTokenizer
@@ -70,37 +78,40 @@ class BertPooler(nn.Module):
         return pooled_output
 ```
 
-## DistilKobert python library
+## Kobert-Transformers python library
+
+- tokenization_kobert.py를 랩핑한 파이썬 라이브러리
+- KoBERT, DistilKoBERT를 Huggingface Transformers 라이브러리 형태로 임포트
 
 ### Install DistilKoBERT
 
 ```bash
-$ pip3 install distilkobert
+$ pip3 install kobert-transformers
 ```
 
 ### How to Use
 
 ```python
 >>> import torch
->>> from distilkobert import get_distilkobert_model
+>>> from kobert_transformers import get_distilkobert_model, get_kobert_model
 
 >>> model = get_distilkobert_model(no_cuda=True)
 >>> input_ids = torch.LongTensor([[31, 51, 99], [15, 5, 0]])
 >>> attention_mask = torch.LongTensor([[1, 1, 1], [1, 1, 0]])
 >>> last_layer_hidden_state, _ = model(input_ids, attention_mask)
 >>> last_layer_hidden_state
-tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
-         [-0.5559, -0.1476,  0.1060,  ..., -0.3178, -0.0172, -0.1064],
-         [ 0.1284,  0.2212,  0.2971,  ..., -0.4619,  0.0483,  0.3293]],
+tensor([[[-0.4294,  0.1849,  0.2622,  ..., -0.8856, -0.0617, -0.0664],
+         [ 0.0580,  0.2065,  0.1131,  ..., -0.9954, -1.2588, -0.1635],
+         [-0.3945,  0.0641, -0.2223,  ..., -0.9819, -0.9723,  0.0929]],
 
-        [[ 0.0414, -0.2016,  0.2643,  ..., -0.4734, -0.9823, -0.2869],
-         [ 0.2286, -0.1787,  0.1831,  ..., -0.7605, -1.0209, -0.5340],
-         [ 0.2507, -0.0022,  0.4103,  ..., -0.7278, -0.9471, -0.3140]]],
+        [[ 0.1698, -0.2389, -0.0153,  ..., -0.0329, -0.0892, -0.0428],
+         [ 0.1348, -0.5269, -0.2861,  ..., -0.6471, -0.6776, -0.2948],
+         [ 0.0655, -0.4104, -0.0467,  ..., -0.5906, -0.6362, -0.0361]]],
        grad_fn=<AddcmulBackward>)
 ```
 
 ```python
->>> from distilkobert import get_tokenizer
+>>> from kobert_transformers import get_tokenizer
 >>> tokenizer = get_tokenizer()
 >>> tokenizer.tokenize("[CLS] 한국어 모델을 공유합니다. [SEP]")
 ['[CLS]', '▁한국', '어', '▁모델', '을', '▁공유', '합니다', '.', '[SEP]']
@@ -119,7 +130,6 @@ tensor([[[-0.2155,  0.1182,  0.1865,  ..., -1.0626, -0.0747, -0.0945],
 
 - [KoBERT](https://github.com/SKTBrain/KoBERT)
 - [Huggingface Transformers](https://github.com/huggingface/transformers)
-- [DistilBERT](https://github.com/huggingface/transformers/blob/master/examples/distillation/README.md)
+- [DistilBERT Github](https://github.com/huggingface/transformers/blob/master/examples/distillation/README.md)
 - [DistilBERT Paper](https://arxiv.org/abs/1910.01108)
-- [bert-as-service](https://github.com/hanxiao/bert-as-service)
-- [딥러닝으로-동네생활-게시글-필터링하기](https://medium.com/daangn/%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%EB%8F%99%EB%84%A4%EC%83%9D%ED%99%9C-%EA%B2%8C%EC%8B%9C%EA%B8%80-%ED%95%84%ED%84%B0%EB%A7%81%ED%95%98%EA%B8%B0-263cfe4bc58d)
+- [딥러닝으로 동네생활 게시글 필터링하기](https://medium.com/daangn/%EB%94%A5%EB%9F%AC%EB%8B%9D%EC%9C%BC%EB%A1%9C-%EB%8F%99%EB%84%A4%EC%83%9D%ED%99%9C-%EA%B2%8C%EC%8B%9C%EA%B8%80-%ED%95%84%ED%84%B0%EB%A7%81%ED%95%98%EA%B8%B0-263cfe4bc58d)
