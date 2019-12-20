@@ -1,4 +1,3 @@
-import os
 from .tokenization_kobert import KoBertTokenizer
 
 

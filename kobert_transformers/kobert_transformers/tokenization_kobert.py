@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 VOCAB_FILES_NAMES = {'vocab_file': 'tokenizer_78b3253a26.model',
                      'vocab_txt': 'vocab.txt'}
-VOCAB_TXT = 'vocab.txt'
 
 PRETRAINED_VOCAB_FILES_MAP = {
     'vocab_file':
