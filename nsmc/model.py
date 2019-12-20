@@ -32,7 +32,6 @@ class BertClassifier(BertPreTrainedModel):
                             token_type_ids=token_type_ids)  # sequence_output, pooled_output, (hidden_states), (attentions)
         pooled_output = outputs[1]  # [CLS]
 
-        # Concat -> fc_layer
         logits = self.label_classifier(pooled_output)
 
         outputs = (logits,) + outputs[2:]  # add hidden states and attention if they are here
@@ -58,14 +57,19 @@ class DistilBertClassifier(DistilBertPreTrainedModel):
 
         self.num_labels = distilbert_config.num_labels
 
-        self.label_classifier = FCLayer(distilbert_config.hidden_size, distilbert_config.num_labels, args.dropout_rate, use_activation=False)
+        self.pre_classifier = nn.Linear(distilbert_config.hidden_size, distilbert_config.hidden_size)
+        self.label_classifier = nn.Linear(distilbert_config.hidden_size, distilbert_config.num_labels)
+        self.dropout = nn.Dropout(args.dropout_rate)
+        self.relu = nn.ReLU()
 
     def forward(self, input_ids, attention_mask, labels):
         outputs = self.distilbert(input_ids, attention_mask=attention_mask)  # last-layer hidden-state, (all hidden_states), (all attentions)
         hidden_state = outputs[0]
         pooled_output = hidden_state[:, 0]  # [CLS]
 
-        # Concat -> fc_layer
+        pooled_output = self.pre_classifier(pooled_output)
+        pooled_output = self.relu(pooled_output)
+        pooled_output = self.dropout(pooled_output)
         logits = self.label_classifier(pooled_output)
 
         outputs = (logits,) + outputs[1:]  # add hidden states and attention if they are here
