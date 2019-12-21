@@ -1,0 +1,3 @@
+[submodule "subtask/nsmc"]
+	path = subtask/nsmc
+	url = https://github.com/monologg/KoBERT-nsmc.git
