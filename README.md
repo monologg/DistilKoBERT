@@ -121,10 +121,15 @@ tensor([[[-0.4294,  0.1849,  0.2622,  ..., -0.8856, -0.0617, -0.0664],
 
 ## Result on Sub-task
 
-|                 | KoBERT | DistilKoBERT (3 layer) | Bert (multilingual) | FastText |
-| --------------- | ------ | ---------------------- | ------------------- | -------- |
-| Model Size (MB) | 351    | 108                    | 681                 | 2        |
-| NSMC (%)        | 89.63  | 88.28                  | 87.07               | 85.50    |
+|                     | KoBERT | DistilKoBERT | Bert-multilingual |
+| ------------------- | ------ | ------------ | ----------------- |
+| Model Size (MB)     | 351    | 108          | 681               |
+| **NSMC** (acc)      | 89.63  | 88.28        | 87.07             |
+| **Naver NER** (F1)  | 84.23  | 81.22        | TBD               |
+| **KorQuAD** (EM/F1) | TBD    | TBD          | 77.04/87.85       |
+
+- NSMC (Naver Sentiment Movie Corpus) ([Implementation of KoBERT-nsmc](https://github.com/monologg/KoBERT-nsmc))
+- Naver NER (NER task on Naver NLP Challenge 2018) ([Implementation of KoBERT-NER](https://github.com/monologg/KoBERT-NER))
 
 ## Reference
 
