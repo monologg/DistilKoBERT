@@ -1,17 +1,36 @@
 # DistilKoBERT
 
-Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
+- Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 
-## KoBERT for transformers library
+## Pretraining DistilKoBERT
 
-- transformers v2.2.2부터 개인이 만든 모델을 transformers를 통해 직접 업로드/다운로드하여 사용할 수 있습니다
+- 기존의 12 layer를 **3 layer**로 줄였으며, 기타 configuration은 kobert를 그대로 따랐습니다.
+  - [원 논문](https://arxiv.org/abs/1910.01108)은 6 layer를 채택하였습니다.
+- Layer 초기화의 경우 기존 KoBERT의 1, 5, 9번째 layer 값을 그대로 사용하였습니다.
+- Pretraining Corpus는 한국어 위키, 나무위키, 뉴스 등 약 6GB의 데이터를 사용했으며, 2.5 epoch 학습하였습니다.
+
+## KoBERT / DistilKoBERT for transformers library
+
+- 기존의 KoBERT를 transformers 라이브러리에서 곧바로 사용할 수 있도록 맞췄습니다.
+  - transformers v2.2.2부터 개인이 만든 모델을 transformers를 통해 직접 업로드/다운로드하여 사용할 수 있습니다
+  - DistilKoBERT 역시 transformers 라이브러리에서 곧바로 다운 받아서 사용할 수 있습니다.
+
+### Dependencies
+
+- torch>=1.1.0
+- transformers>=2.2.2
+- sentencepiece>=0.1.82
+
+### How to Use
 
 ```python
->>> from transformers import BertModel
->>> model = BertModel.from_pretrained('monologg/kobert')
+>>> from transformers import BertModel, DistilBertModel
+>>> bert_model = BertModel.from_pretrained('monologg/kobert')
+>>> distilbert_model = DistilBertModel.from_pretrained('monologg/distilkobert')
 ```
 
 - Tokenizer를 사용하려면, 루트 디렉토리의 `tokenization_kobert.py` 파일을 복사한 후, `KoBertTokenizer`를 임포트하면 됩니다.
+  - KoBERT와 DistilKoBERT 모두 동일한 토크나이저를 사용합니다.
   - **기존 KoBERT의 경우 Special Token이 제대로 분리되지 않는 이슈가 있어서 해당 부분을 수정하여 반영하였습니다.** ([Issue link](https://github.com/SKTBrain/KoBERT/issues/11))
 
 ```python
@@ -21,33 +40,6 @@ Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 ['[CLS]', '▁한국', '어', '▁모델', '을', '▁공유', '합니다', '.', '[SEP]']
 >>> tokenizer.convert_tokens_to_ids(['[CLS]', '▁한국', '어', '▁모델', '을', '▁공유', '합니다', '.', '[SEP]'])
 [2, 4958, 6855, 2046, 7088, 1050, 7843, 54, 3]
-```
-
-## Pretraining DistilKoBERT
-
-- 기존의 12 layer를 **3 layer**로 줄였으며, 기타 configuration은 kobert를 그대로 따랐습니다.
-  - [원 논문](https://arxiv.org/abs/1910.01108)은 6 layer를 채택하였습니다
-- Layer 초기화의 경우 기존 KoBERT의 1, 5, 9번째 layer 값을 그대로 사용하였습니다.
-- Pretraining Corpus는 한국어 위키, 나무위키, 뉴스 등 약 6GB의 데이터를 사용했으며, 2.5 epoch 학습하였습니다.
-
-## DistilKoBERT for transformers library
-
-- Tokenizer를 사용하려면, 루트 디렉토리의 `tokenization_kobert.py` 파일을 복사한 후, `KoBertTokenizer`를 임포트하면 됩니다.
-  - KoBERT와 DistilKoBERT 모두 동일한 토크나이저를 사용합니다.
-
-### Dependencies
-
-- torch==1.1.0
-- transformers==2.2.2
-- sentencepiece>=0.1.82
-
-### How to Use
-
-```python
->>> from transformers import DistilBertModel
->>> from tokenization_kobert import KoBertTokenizer
->>> model = DistilBertModel.from_pretrained('monologg/distilkobert')
->>> tokenizer = KoBertTokenizer.from_pretrained('monologg/distilkobert')
 ```
 
 ## What is different between BERT and DistilBERT
@@ -83,7 +75,7 @@ class BertPooler(nn.Module):
 - tokenization_kobert.py를 랩핑한 파이썬 라이브러리
 - KoBERT, DistilKoBERT를 Huggingface Transformers 라이브러리 형태로 임포트
 
-### Install DistilKoBERT
+### Install Kobert-Transformers
 
 ```bash
 $ pip3 install kobert-transformers
