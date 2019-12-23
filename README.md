@@ -117,7 +117,7 @@ tensor([[[-0.4294,  0.1849,  0.2622,  ..., -0.8856, -0.0617, -0.0664],
 | ------------------- | ------ | ------------ | ----------------- |
 | Model Size (MB)     | 351    | 108          | 681               |
 | **NSMC** (acc)      | 89.63  | 88.28        | 87.07             |
-| **Naver NER** (F1)  | 84.23  | 81.22        | TBD               |
+| **Naver NER** (F1)  | 84.23  | 81.33        | 81.78             |
 | **KorQuAD** (EM/F1) | TBD    | TBD          | 77.04/87.85       |
 
 - NSMC (Naver Sentiment Movie Corpus) ([Implementation of KoBERT-nsmc](https://github.com/monologg/KoBERT-nsmc))
