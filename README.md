@@ -87,7 +87,7 @@ $ pip3 install kobert-transformers
 >>> import torch
 >>> from kobert_transformers import get_distilkobert_model, get_kobert_model
 
->>> model = get_distilkobert_model(no_cuda=True)
+>>> model = get_distilkobert_model()
 >>> input_ids = torch.LongTensor([[31, 51, 99], [15, 5, 0]])
 >>> attention_mask = torch.LongTensor([[1, 1, 1], [1, 1, 0]])
 >>> last_layer_hidden_state, _ = model(input_ids, attention_mask)
