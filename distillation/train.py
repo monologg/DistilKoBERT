@@ -36,8 +36,8 @@ from utils import git_log, logger, init_gpu_params, set_seed
 from lm_seqs_dataset import LmSeqsDataset
 
 MODEL_CLASSES = {
-    'distilbert': (DistilBertConfig, DistilBertForMaskedLM, KoBertTokenizer),
-    'distilkobert': (DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer),
+    'distilbert': (DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer),
+    'distilkobert': (DistilBertConfig, DistilBertForMaskedLM, KoBertTokenizer),
     'roberta': (RobertaConfig, RobertaForMaskedLM, RobertaTokenizer),
     'kobert': (BertConfig, BertForMaskedLM, KoBertTokenizer),
     'bert': (BertConfig, BertForMaskedLM, BertTokenizer),
