@@ -72,6 +72,10 @@ class BertPooler(nn.Module):
 
 ## Kobert-Transformers python library
 
+[![Release](https://img.shields.io/badge/release-v0.2.0-green)](https://pypi.org/project/kobert-transformers/)
+[![Downloads](https://pepy.tech/badge/kakaotrans)](https://pepy.tech/project/kakaotrans)
+[![license](https://img.shields.io/badge/license-Apache%202.0-red)](https://github.com/monologg/DistilKoBERT/blob/master/LICENSE)
+
 - tokenization_kobert.py를 랩핑한 파이썬 라이브러리
 - KoBERT, DistilKoBERT를 Huggingface Transformers 라이브러리 형태로 임포트
 
