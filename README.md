@@ -53,23 +53,6 @@
   - 고로 기존 BertModel의 경우 forward의 return 값으로 `sequence_output, pooled_output, (hidden_states), (attentions)`을 뽑아내지만, DistilBertModel의 경우 `sequence_output, (hidden_states), (attentions)`를 뽑아냅니다.
   - DistilBert에서 `[CLS]` 토큰을 뽑아내려면 `sequence_output[0][:, 0]`를 적용해야 합니다.
 
-```python
-# Transformers의 BertModel에서 sequence_output으로부터 pooled_output을 만들기 위해 사용하는 BertPooler
-class BertPooler(nn.Module):
-    def __init__(self, config):
-        super(BertPooler, self).__init__()
-        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
-        self.activation = nn.Tanh()
-
-    def forward(self, hidden_states):
-        # We "pool" the model by simply taking the hidden state corresponding
-        # to the first token.
-        first_token_tensor = hidden_states[:, 0]
-        pooled_output = self.dense(first_token_tensor)
-        pooled_output = self.activation(pooled_output)
-        return pooled_output
-```
-
 ## Kobert-Transformers python library
 
 [![Release](https://img.shields.io/badge/release-v0.2.0-green)](https://pypi.org/project/kobert-transformers/)
