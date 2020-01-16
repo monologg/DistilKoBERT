@@ -22,7 +22,7 @@ python3 -m torch.distributed.launch \
         --student_type distilkobert \
         --student_config training_configs/distilkobert_1_layer.json \
         --teacher_type kobert \
-        --teacher_name monologg/kobert \
+        --teacher_name monologg/kobert-lm \
         --alpha_ce 0.33 --alpha_mlm 0.33 --alpha_cos 0.33 --alpha_clm 0.0 --mlm \
         --freeze_pos_embs \
         --dump_path serialization_dir/1_layer \
