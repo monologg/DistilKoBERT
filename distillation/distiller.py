@@ -209,7 +209,6 @@ class Distiller:
         bs, max_seq_len = token_ids.size()
         mlm_labels = token_ids.new(token_ids.size()).copy_(token_ids)
 
-        print(token_ids.type())
         x_prob = self.token_probs[token_ids.flatten()]
         n_tgt = math.ceil(self.mlm_mask_prop * lengths.sum().item())
         tgt_ids = torch.multinomial(x_prob / x_prob.sum(), n_tgt, replacement=False)
