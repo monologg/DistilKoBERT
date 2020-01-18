@@ -206,9 +206,6 @@ class Distiller:
 
         attn_mask = torch.arange(token_ids.size(1), dtype=torch.long, device=lengths.device) < lengths[:, None]
 
-        print("token_ids.size():", token_ids.size())
-        print("attn_mask.size():", attn_mask.size())
-
         bs, max_seq_len = token_ids.size()
         mlm_labels = token_ids.new(token_ids.size()).copy_(token_ids)
 
