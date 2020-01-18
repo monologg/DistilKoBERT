@@ -12,4 +12,5 @@ python3 train.py \
     --token_counts data/token_counts.kobert.pickle \
     --force \
     --batch_size 16 \
+    --gradient_accumulation_steps 8 \
     --student_pretrained_weights serialization_dir/3_layer.pth
