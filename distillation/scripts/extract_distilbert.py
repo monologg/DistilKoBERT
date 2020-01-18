@@ -19,6 +19,7 @@ Specific to BERT -> DistilBERT.
 from transformers import BertForMaskedLM
 import torch
 import argparse
+import os
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
