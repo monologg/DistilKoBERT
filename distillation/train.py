@@ -179,7 +179,7 @@ def main():
 
     parser.add_argument("--log_interval", type=int, default=500,
                         help="Tensorboard logging interval.")
-    parser.add_argument("--checkpoint_interval", type=int, default=4000,
+    parser.add_argument("--checkpoint_interval", type=int, default=100000,
                         help="Checkpoint interval.")
     args = parser.parse_args()
     sanity_checks(args)

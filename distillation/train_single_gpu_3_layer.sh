@@ -8,8 +8,8 @@ python3 train.py \
     --alpha_ce 0.33 --alpha_mlm 0.33 --alpha_cos 0.33 --alpha_clm 0.0 --mlm \
     --freeze_pos_embs \
     --dump_path serialization_dir/3_layer \
-    --data_file data/binarized_text.kobert.pickle \
+    --data_file data/dump.kobert.pickle \
     --token_counts data/token_counts.kobert.pickle \
     --force \
-    --batch_size 20 \
+    --batch_size 16 \
     --student_pretrained_weights serialization_dir/3_layer.pth

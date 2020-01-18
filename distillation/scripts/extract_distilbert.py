@@ -24,11 +24,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Extraction some layers of the full BertForMaskedLM or RObertaForMaskedLM for Transfer Learned Distillation")
     parser.add_argument("--model_type", default="bert", choices=["bert"])
-    parser.add_argument("--model_name", default='kobert', type=str)
-    parser.add_argument("--dump_checkpoint", default='serialization_dir/6_layer.pth', type=str)
+    parser.add_argument("--model_name", default='kobert-lm', type=str)
     parser.add_argument("--vocab_transform", action='store_true')
     parser.add_argument("--num_layer", default=3, type=int)
     args = parser.parse_args()
+
+    args.dump_checkpoint = 'serialization_dir/{}_layer.pth'.format(args.num_layer)
+
+    if not os.path.exists('serialization_dir'):
+        os.mkdir('serialization_dir')
 
     if args.model_type == 'bert':
         model = BertForMaskedLM.from_pretrained(args.model_name)
