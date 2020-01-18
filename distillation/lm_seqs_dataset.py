@@ -146,6 +146,6 @@ class LmSeqsDataset(Dataset):
         assert len(tk_) == len(token_ids)
         assert all(len(t) == max_seq_len_ for t in tk_)
 
-        tk_t = torch.tensor(tk_)      # (bs, max_seq_len_)
-        lg_t = torch.tensor(lengths)  # (bs)
+        tk_t = torch.tensor(tk_, dtype=torch.long)      # (bs, max_seq_len_)
+        lg_t = torch.tensor(lengths, dtype=torch.long)  # (bs)
         return tk_t, lg_t
