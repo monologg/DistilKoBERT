@@ -25,7 +25,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Extraction some layers of the full BertForMaskedLM or RObertaForMaskedLM for Transfer Learned Distillation")
     parser.add_argument("--model_type", default="bert", choices=["bert"])
-    parser.add_argument("--model_name", default='kobert-lm', type=str)
+    parser.add_argument("--model_name", default='monologg/kobert-lm', type=str)
     parser.add_argument("--vocab_transform", action='store_true')
     parser.add_argument("--num_layer", default=3, type=int)
     args = parser.parse_args()
