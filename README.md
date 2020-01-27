@@ -1,13 +1,15 @@
 # DistilKoBERT
 
-- Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
+Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
+
+**January 27th, 2020 - Update**: 10GB의 Corpus를 가지고 새로 학습하였습니다. Subtask에서 성능이 소폭 상승했습니다.
 
 ## Pretraining DistilKoBERT
 
 - 기존의 12 layer를 **3 layer**로 줄였으며, 기타 configuration은 kobert를 그대로 따랐습니다.
   - [원 논문](https://arxiv.org/abs/1910.01108)은 6 layer를 채택하였습니다.
 - Layer 초기화의 경우 기존 KoBERT의 1, 5, 9번째 layer 값을 그대로 사용하였습니다.
-- Pretraining Corpus는 한국어 위키, 나무위키, 뉴스 등 약 6GB의 데이터를 사용했으며, 2.5 epoch 학습하였습니다.
+- Pretraining Corpus는 한국어 위키, 나무위키, 뉴스 등 약 10GB의 데이터를 사용했으며, 3 epoch 학습하였습니다.
 
 ## KoBERT / DistilKoBERT for transformers library
 
@@ -103,8 +105,8 @@ tensor([[[-0.4294,  0.1849,  0.2622,  ..., -0.8856, -0.0617, -0.0664],
 |                     | KoBERT | DistilKoBERT | Bert-multilingual |
 | ------------------- | ------ | ------------ | ----------------- |
 | Model Size (MB)     | 351    | 108          | 681               |
-| **NSMC** (acc)      | 89.63  | 88.28        | 87.07             |
-| **Naver NER** (F1)  | 84.23  | 81.33        | 81.78             |
+| **NSMC** (acc)      | 89.63  | 88.41        | 87.07             |
+| **Naver NER** (F1)  | 84.23  | 82.14        | 81.78             |
 | **KorQuAD** (EM/F1) | TBD    | TBD          | 77.04/87.85       |
 
 - NSMC (Naver Sentiment Movie Corpus) ([Implementation of KoBERT-nsmc](https://github.com/monologg/KoBERT-nsmc))
