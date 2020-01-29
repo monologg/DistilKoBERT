@@ -14,13 +14,6 @@ logger = logging.getLogger(__name__)
 VOCAB_FILES_NAMES = {'vocab_file': 'tokenizer_78b3253a26.model',
                      'vocab_txt': 'vocab.txt'}
 
-PRETRAINED_VOCAB_FILES_MAP = {
-    'vocab_file':
-        {
-            'kobert': "https://kobert.blob.core.windows.net/models/kobert/tokenizer/tokenizer_78b3253a26.model",
-        }
-}
-
 SPIECE_UNDERLINE = u'▁'
 
 
@@ -31,7 +24,6 @@ class KoBertTokenizer(PreTrainedTokenizer):
             - requires `SentencePiece <https://github.com/google/sentencepiece>`_
     """
     vocab_files_names = VOCAB_FILES_NAMES
-    pretrained_vocab_files_map = PRETRAINED_VOCAB_FILES_MAP
 
     def __init__(self, vocab_file, vocab_txt,
                  do_lower_case=False, remove_space=True, keep_accents=False,
@@ -51,6 +43,7 @@ class KoBertTokenizer(PreTrainedTokenizer):
                 self.token2idx[token] = idx
                 self.idx2token.append(token)
 
+        self.max_len = 512  # hard-coded
         self.max_len_single_sentence = self.max_len - 2  # take into account special tokens
         self.max_len_sentences_pair = self.max_len - 3  # take into account special tokens
 
