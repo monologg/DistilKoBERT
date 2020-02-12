@@ -11,7 +11,7 @@ setup(name='kobert-transformers',
       author='Jangwon Park',
       author_email='adieujw@gmail.com',
       description='Transformers library for KoBERT, DistilKoBERT',
-      packages=find_packages(exclude=['distillation', 'nsmc', 'ner', 'korquad']),
+      packages=find_packages(exclude=['distillation', 'subtask']),
       long_description=open('../README.md', 'r', encoding='utf-8').read(),
       long_description_content_type="text/markdown",
       python_requires='>=3',
@@ -24,5 +24,5 @@ setup(name='kobert-transformers',
           'Topic :: Scientific/Engineering :: Artificial Intelligence',
       ),
       install_requires=require_packages,
-      keywords="distillation kobert bert pytorch transformers lightweight"
+      keywords="distilkobert kobert bert pytorch transformers lightweight"
       )
