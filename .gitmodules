@@ -4,3 +4,6 @@
 [submodule "subtask/ner"]
 	path = subtask/ner
 	url = https://github.com/monologg/KoBERT-NER.git
+[submodule "subtask/korquad"]
+	path = subtask/korquad
+	url = https://github.com/monologg/KoBERT-KorQuAD
