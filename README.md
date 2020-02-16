@@ -74,21 +74,18 @@ $ pip3 install kobert-transformers
 
 ```python
 >>> import torch
->>> from kobert_transformers import get_distilkobert_model, get_kobert_model
-
->>> model = get_distilkobert_model()
+>>> from kobert_transformers import get_kobert_model, get_distilkobert_model
+>>> model = get_kobert_model()
+>>> model.eval()
 >>> input_ids = torch.LongTensor([[31, 51, 99], [15, 5, 0]])
 >>> attention_mask = torch.LongTensor([[1, 1, 1], [1, 1, 0]])
->>> last_layer_hidden_state, _ = model(input_ids, attention_mask)
->>> last_layer_hidden_state
-tensor([[[-0.4294,  0.1849,  0.2622,  ..., -0.8856, -0.0617, -0.0664],
-         [ 0.0580,  0.2065,  0.1131,  ..., -0.9954, -1.2588, -0.1635],
-         [-0.3945,  0.0641, -0.2223,  ..., -0.9819, -0.9723,  0.0929]],
-
-        [[ 0.1698, -0.2389, -0.0153,  ..., -0.0329, -0.0892, -0.0428],
-         [ 0.1348, -0.5269, -0.2861,  ..., -0.6471, -0.6776, -0.2948],
-         [ 0.0655, -0.4104, -0.0467,  ..., -0.5906, -0.6362, -0.0361]]],
-       grad_fn=<AddcmulBackward>)
+>>> token_type_ids = torch.LongTensor([[0, 0, 1], [0, 1, 0]])
+>>> sequence_output, pooled_output = model(input_ids, attention_mask, token_type_ids)
+>>> sequence_output[0]
+tensor([[-0.2461,  0.2428,  0.2590,  ..., -0.4861, -0.0731,  0.0756],
+        [-0.2478,  0.2420,  0.2552,  ..., -0.4877, -0.0727,  0.0754],
+        [-0.2472,  0.2420,  0.2561,  ..., -0.4874, -0.0733,  0.0765]],
+       grad_fn=<SelectBackward>)
 ```
 
 ```python
@@ -102,15 +99,16 @@ tensor([[[-0.4294,  0.1849,  0.2622,  ..., -0.8856, -0.0617, -0.0664],
 
 ## Result on Sub-task
 
-|                     | KoBERT | DistilKoBERT | Bert-multilingual |
-| ------------------- | ------ | ------------ | ----------------- |
-| Model Size (MB)     | 351    | 108          | 681               |
-| **NSMC** (acc)      | 89.63  | 88.41        | 87.07             |
-| **Naver NER** (F1)  | 84.23  | 82.14        | 81.78             |
-| **KorQuAD** (EM/F1) | TBD    | TBD          | 77.04/87.85       |
+|                           | KoBERT | DistilKoBERT | Bert-multilingual |
+| ------------------------- | ------ | ------------ | ----------------- |
+| Model Size (MB)           | 351    | 108          | 681               |
+| **NSMC** (acc)            | 89.63  | 88.41        | 87.07             |
+| **Naver NER** (F1)        | 84.23  | 82.14        | 81.78             |
+| **KorQuAD (Dev)** (EM/F1) | TBD    | TBD          | 77.04/87.85       |
 
 - NSMC (Naver Sentiment Movie Corpus) ([Implementation of KoBERT-nsmc](https://github.com/monologg/KoBERT-nsmc))
 - Naver NER (NER task on Naver NLP Challenge 2018) ([Implementation of KoBERT-NER](https://github.com/monologg/KoBERT-NER))
+- KorQuAD (The Korean Question Answering Dataset) ([Implementation of KoBERT-KorQuAD](https://github.com/monologg/KoBERT-KorQuAD))
 
 ## Reference
 
