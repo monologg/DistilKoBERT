@@ -57,7 +57,7 @@ Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 
 ## Kobert-Transformers python library
 
-[![PyPI](https://img.shields.io/pypi/v/kobert-transformers)](https://pypi.org/project/transformers/)
+[![PyPI](https://img.shields.io/pypi/v/kobert-transformers)](https://pypi.org/project/kobert-transformers/)
 [![Downloads](https://pepy.tech/badge/kobert-transformers)](https://pepy.tech/project/kobert-transformers)
 [![license](https://img.shields.io/badge/license-Apache%202.0-red)](https://github.com/monologg/DistilKoBERT/blob/master/LICENSE)
 
