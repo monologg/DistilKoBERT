@@ -2,7 +2,8 @@
 
 Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 
-**January 27th, 2020 - Update**: 10GB의 Corpus를 가지고 새로 학습하였습니다. Subtask에서 성능이 소폭 상승했습니다.
+**January 27th, 2020 - Update**: 10GB의 Corpus를 가지고 새로 학습하였습니다. Subtask에서 성능이 소폭 상승했습니다.  
+**May 14th, 2020 - Update**: 기존 Transformers의 `padding_idx` 이슈를 해결하였습니다. 자세한 사항은 [KoBERT-Transformers](https://github.com/monologg/KoBERT-Transformers)를 참고하시면 됩니다.
 
 ## Pretraining DistilKoBERT
 
@@ -20,8 +21,7 @@ Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 ### Dependencies
 
 - torch>=1.1.0
-- transformers>=2.2.2
-- sentencepiece>=0.1.82
+- transformers>=2.9.1
 
 ### How to Use
 
@@ -54,48 +54,6 @@ Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 
   - 고로 기존 BertModel의 경우 forward의 return 값으로 `sequence_output, pooled_output, (hidden_states), (attentions)`을 뽑아내지만, DistilBertModel의 경우 `sequence_output, (hidden_states), (attentions)`를 뽑아냅니다.
   - DistilBert에서 `[CLS]` 토큰을 뽑아내려면 `sequence_output[0][:, 0]`를 적용해야 합니다.
-
-## Kobert-Transformers python library
-
-[![PyPI](https://img.shields.io/pypi/v/kobert-transformers)](https://pypi.org/project/kobert-transformers/)
-[![Downloads](https://pepy.tech/badge/kobert-transformers)](https://pepy.tech/project/kobert-transformers)
-[![license](https://img.shields.io/badge/license-Apache%202.0-red)](https://github.com/monologg/DistilKoBERT/blob/master/LICENSE)
-
-- tokenization_kobert.py를 랩핑한 파이썬 라이브러리
-- KoBERT, DistilKoBERT를 Huggingface Transformers 라이브러리 형태로 임포트
-
-### Install Kobert-Transformers
-
-```bash
-$ pip3 install kobert-transformers
-```
-
-### How to Use
-
-```python
->>> import torch
->>> from kobert_transformers import get_kobert_model, get_distilkobert_model
->>> model = get_kobert_model()
->>> model.eval()
->>> input_ids = torch.LongTensor([[31, 51, 99], [15, 5, 0]])
->>> attention_mask = torch.LongTensor([[1, 1, 1], [1, 1, 0]])
->>> token_type_ids = torch.LongTensor([[0, 0, 1], [0, 1, 0]])
->>> sequence_output, pooled_output = model(input_ids, attention_mask, token_type_ids)
->>> sequence_output[0]
-tensor([[-0.2461,  0.2428,  0.2590,  ..., -0.4861, -0.0731,  0.0756],
-        [-0.2478,  0.2420,  0.2552,  ..., -0.4877, -0.0727,  0.0754],
-        [-0.2472,  0.2420,  0.2561,  ..., -0.4874, -0.0733,  0.0765]],
-       grad_fn=<SelectBackward>)
-```
-
-```python
->>> from kobert_transformers import get_tokenizer
->>> tokenizer = get_tokenizer()
->>> tokenizer.tokenize("[CLS] 한국어 모델을 공유합니다. [SEP]")
-['[CLS]', '▁한국', '어', '▁모델', '을', '▁공유', '합니다', '.', '[SEP]']
->>> tokenizer.convert_tokens_to_ids(['[CLS]', '▁한국', '어', '▁모델', '을', '▁공유', '합니다', '.', '[SEP]'])
-[2, 4958, 6855, 2046, 7088, 1050, 7843, 54, 3]
-```
 
 ## Result on Sub-task
 
