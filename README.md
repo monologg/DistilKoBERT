@@ -68,6 +68,21 @@ Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 - Naver NER (NER task on Naver NLP Challenge 2018) ([Implementation of KoBERT-NER](https://github.com/monologg/KoBERT-NER))
 - KorQuAD (The Korean Question Answering Dataset) ([Implementation of KoBERT-KorQuAD](https://github.com/monologg/KoBERT-KorQuAD))
 
+## Citation
+
+이 코드를 연구용으로 사용하는 경우 아래와 같이 인용해주세요.
+
+```
+@misc{park2019distilkobert,
+  author = {Park, Jangwon},
+  title = {DistilKoBERT: Distillation of KoBERT},
+  year = {2019},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/monologg/DistilKoBERT}}
+}
+```
+
 ## Reference
 
 - [KoBERT](https://github.com/SKTBrain/KoBERT)
