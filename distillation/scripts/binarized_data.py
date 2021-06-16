@@ -55,7 +55,7 @@ def main():
         bos = tokenizer.special_tokens_map['bos_token']  # `<|endoftext|>`
         sep = tokenizer.special_tokens_map['eos_token']  # `<|endoftext|>`
     elif args.tokenizer_type == 'kobert':
-        tokenizer = KoBertTokenizer.from_pretrained('kobert')
+        tokenizer = KoBertTokenizer.from_pretrained('monologg/kobert')
         bos = tokenizer.special_tokens_map['cls_token']
         sep = tokenizer.special_tokens_map['sep_token']
 
