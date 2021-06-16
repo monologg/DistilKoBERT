@@ -20,8 +20,8 @@ Distillation of KoBERT (`SKTBrain KoBERT` 경량화)
 
 ### Dependencies
 
-- torch>=1.1.0
-- transformers>=2.9.1
+- torch==1.1.0
+- transformers==2.9.1
 
 ### How to Use
 
